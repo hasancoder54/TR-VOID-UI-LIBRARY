@@ -1,9 +1,8 @@
-
 --[[
-    TR-VOID UI LIBRARY (MOBILE LOGO VERSION)
+    TR-VOID UI LIBRARY (TOP-LEFT EXTREME)
     Developer: Hasan (hasancoder54)
-    Version: 1.8
-    Update: Open Button moved under Roblox Logo (Top Left, Square)
+    Version: 1.9
+    Update: Open Button moved to Absolute Top-Left (Square & Compact)
 ]]
 
 local Library = {}
@@ -19,17 +18,17 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - ROBLOX LOGOSUNUN ALTI (SOL ÜST)]
+    -- [OPEN BUTTON - SOL ÜST EN TEPEDE]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -60) -- Başlangıçta ekranın üstünde gizli
-    OpenButtonFrame.Size = UDim2.new(0, 45, 0, 45) -- Kare Form
+    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -100) -- Başlangıçta çok yukarıda gizli
+    OpenButtonFrame.Size = UDim2.new(0, 40, 0, 40) -- Tam kare ve kompakt
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
-    OpenCorner.CornerRadius = UDim.new(0, 10) -- Yumuşak Köşeler
+    OpenCorner.CornerRadius = UDim.new(0, 8)
     OpenCorner.Parent = OpenButtonFrame
 
     local OpenStroke = Instance.new("UIStroke")
@@ -42,11 +41,11 @@ function Library:CreateWindow(cfg)
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "VOID" -- Kare olduğu için kısa metin daha iyi durur
+    OpenText.Text = "V" -- Kare olduğu için tek harf veya kısa ikon daha şık durur
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    OpenText.TextSize = 10
+    OpenText.TextSize = 14
 
-    -- [MAIN MENU FRAME]
+    -- [MAIN FRAME]
     local Main = Instance.new("Frame")
     Main.Name = "Main"
     Main.Parent = ScreenGui
@@ -116,18 +115,18 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA: Butonu Roblox logosunun hemen altına (Y: 50 civarı) getirir
+    -- KAPATMA: Butonu sol üstün en tavanına (Y: 5) getirir
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 50), "Out", "Back", 0.5, true)
+            OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 5), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA: Butonu ekranın üstüne geri saklar
+    -- AÇMA: Butonu tekrar çok yukarı saklar
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -60), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -100), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
@@ -233,3 +232,4 @@ function Library:CreateWindow(cfg)
 end
 
 return Library
+
