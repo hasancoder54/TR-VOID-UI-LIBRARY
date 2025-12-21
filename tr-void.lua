@@ -1,7 +1,7 @@
 --[[
-    TR-VOID UI LIBRARY (v3.5)
+    TR-VOID UI LIBRARY (v3.6)
     Developer: Hasan (hasancoder54)
-    Updates: Bigger Fonts, Fixed Tab Labels, Added Input, Fixed Dropdown
+    Updates: Horizontal Tab Scrolling, Larger Fonts, Fixed Missing Elements
 ]]
 
 local Library = {}
@@ -25,7 +25,7 @@ function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 480
     local WindowHeight = cfg.Height or 380
-    local MainFontSize = cfg.FontSize or 16 -- Yazı boyutu ayarı
+    local MainFontSize = cfg.FontSize or 16
 
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "TR_VOID_UI"
@@ -36,7 +36,7 @@ function Library:CreateWindow(cfg)
     local OpenButton = Instance.new("Frame")
     OpenButton.Parent = ScreenGui
     OpenButton.BackgroundColor3 = Theme.Main
-    OpenButton.Position = UDim2.new(0, 10, 0, 25) -- Çok yukarda (Logo altı)
+    OpenButton.Position = UDim2.new(0, 10, 0, 30)
     OpenButton.Size = UDim2.new(0, 80, 0, 35)
     OpenButton.Visible = false
     Instance.new("UICorner", OpenButton).CornerRadius = UDim.new(0, 8)
@@ -60,7 +60,7 @@ function Library:CreateWindow(cfg)
     Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
     Instance.new("UIStroke", Main).Color = Color3.fromRGB(45, 45, 50)
 
-    -- Drag
+    -- Drag Logic
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dragStart = input.Position; startPos = Main.Position end
@@ -101,17 +101,27 @@ function Library:CreateWindow(cfg)
     Close.MouseButton1Click:Connect(function() Main.Visible = false; OpenButton.Visible = true end)
     OpenBtn.MouseButton1Click:Connect(function() OpenButton.Visible = false; Main.Visible = true end)
 
-    -- [TAB BAR]
+    -- [HORIZONTAL SCROLLING TAB BAR]
     local TabBar = Instance.new("ScrollingFrame")
     TabBar.Parent = Main
     TabBar.Position = UDim2.new(0, 10, 0, 45)
     TabBar.Size = UDim2.new(1, -20, 0, 40)
     TabBar.BackgroundTransparency = 1
-    TabBar.ScrollBarThickness = 0
+    TabBar.ScrollBarThickness = 2 -- İnce bir çubuk
+    TabBar.ScrollBarImageColor3 = Theme.Accent
+    TabBar.CanvasSize = UDim2.new(0, 0, 0, 0) -- İçeriğe göre uzayacak
+    TabBar.ScrollingDirection = Enum.ScrollingDirection.X -- Sadece sağa sola kayma!
+
     local TabLayout = Instance.new("UIListLayout")
     TabLayout.Parent = TabBar
     TabLayout.FillDirection = Enum.FillDirection.Horizontal
     TabLayout.Padding = UDim.new(0, 10)
+    TabLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+    -- Sekmeler eklendikçe kaydırma alanını genişlet
+    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabBar.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X + 10, 0, 0)
+    end)
 
     local ContainerHolder = Instance.new("Frame")
     ContainerHolder.Parent = Main
@@ -128,14 +138,14 @@ function Library:CreateWindow(cfg)
         local TabBtn = Instance.new("TextButton")
         TabBtn.Parent = TabBar
         TabBtn.BackgroundColor3 = Theme.Element
-        TabBtn.Text = tabName -- BURADA İSİM YAZIYOR ARTIK
+        TabBtn.Text = tabName
         TabBtn.TextColor3 = Theme.SecondaryText
         TabBtn.Font = Enum.Font.GothamBold
         TabBtn.TextSize = 15
         Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
         
         local tSize = TextService:GetTextSize(tabName, 15, Enum.Font.GothamBold, Vector2.new(1000, 40))
-        TabBtn.Size = UDim2.new(0, tSize.X + 30, 0, 35)
+        TabBtn.Size = UDim2.new(0, tSize.X + 30, 0, 32)
 
         local Container = Instance.new("ScrollingFrame")
         Container.Parent = ContainerHolder
@@ -212,34 +222,34 @@ function Library:CreateWindow(cfg)
             Toggle.MouseButton1Click:Connect(function()
                 state = not state
                 callback(state)
-                TweenService:Create(Circle, TweenInfo.new(0.2, Enum.EasingStyle.Quart), {Position = state and UDim2.new(1, -22, 0.5, -9) or UDim2.new(0, 4, 0.5, -9)}):Play()
+                TweenService:Create(Circle, TweenInfo.new(0.2), {Position = state and UDim2.new(1, -22, 0.5, -9) or UDim2.new(0, 4, 0.5, -9)}):Play()
                 TweenService:Create(Bg, TweenInfo.new(0.2), {BackgroundColor3 = state and Theme.Success or Color3.fromRGB(50, 50, 60)}):Play()
             end)
         end
 
-        -- [NEW] INPUT
+        -- INPUT
         function Elements:CreateInput(text, placeholder, callback)
             local InputFrame = Instance.new("Frame")
             InputFrame.Parent = Container
             InputFrame.BackgroundColor3 = Theme.Element
-            InputFrame.Size = UDim2.new(0.96, 0, 0, 50)
+            InputFrame.Size = UDim2.new(0.96, 0, 0, 55)
             Instance.new("UICorner", InputFrame)
 
-            local Title = Instance.new("TextLabel")
-            Title.Parent = InputFrame
-            Title.Size = UDim2.new(1, 0, 0, 20)
-            Title.Position = UDim2.new(0, 10, 0, 5)
-            Title.BackgroundTransparency = 1
-            Title.Text = text
-            Title.TextColor3 = Theme.SecondaryText
-            Title.Font = Enum.Font.Gotham
-            Title.TextSize = 12
-            Title.TextXAlignment = Enum.TextXAlignment.Left
+            local InputTitle = Instance.new("TextLabel")
+            InputTitle.Parent = InputFrame
+            InputTitle.Size = UDim2.new(1, 0, 0, 25)
+            InputTitle.Position = UDim2.new(0, 10, 0, 2)
+            InputTitle.BackgroundTransparency = 1
+            InputTitle.Text = text
+            InputTitle.TextColor3 = Theme.SecondaryText
+            InputTitle.Font = Enum.Font.Gotham
+            InputTitle.TextSize = 13
+            InputTitle.TextXAlignment = Enum.TextXAlignment.Left
 
             local Box = Instance.new("TextBox")
             Box.Parent = InputFrame
             Box.Size = UDim2.new(1, -20, 0, 25)
-            Box.Position = UDim2.new(0, 10, 0, 22)
+            Box.Position = UDim2.new(0, 10, 0, 25)
             Box.BackgroundColor3 = Theme.Main
             Box.PlaceholderText = placeholder
             Box.Text = ""
@@ -253,7 +263,7 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [NEW] DROPDOWN
+        -- DROPDOWN
         function Elements:CreateDropdown(text, list, callback)
             local open = false
             local DropFrame = Instance.new("Frame")
