@@ -490,4 +490,14 @@ function Library:CreateWindow(cfg)
             Box.TextSize = MainFontSize
             Instance.new("UICorner", Box)
             
-            Box.FocusLo
+            Box.FocusLost:Connect(function(enter)
+                if enter then callback(Box.Text) end
+            end)
+        end
+
+        return Elements
+    end
+    return Tabs
+end
+
+return Library
