@@ -5,7 +5,7 @@ local CoreGui = game:GetService("CoreGui")
 local TextService = game:GetService("TextService")
 local RunService = game:GetService("RunService")
 
--- [ TEMA AYARLARI ]
+-- Renk Paleti
 local Theme = {
     Main = Color3.fromRGB(15, 15, 18),
     TopBar = Color3.fromRGB(22, 22, 26),
@@ -17,7 +17,7 @@ local Theme = {
     Error = Color3.fromRGB(255, 60, 60)
 }
 
--- [ 1. BİLDİRİM SİSTEMİ ]
+-- [1. BİLDİRİM SİSTEMİ]
 function Library:Notify(title, text, duration)
     local NotifyGui = CoreGui:FindFirstChild("TR_VOID_NOTIFY") or Instance.new("ScreenGui", CoreGui)
     NotifyGui.Name = "TR_VOID_NOTIFY"
@@ -53,6 +53,7 @@ function Library:Notify(title, text, duration)
     ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     Notif:TweenPosition(UDim2.new(1, -250, 1, -100), "Out", "Quart", 0.5, true)
+    
     task.delay(duration or 3, function()
         Notif:TweenPosition(UDim2.new(1, 20, 1, -100), "In", "Quart", 0.5, true)
         task.wait(0.5)
@@ -60,62 +61,80 @@ function Library:Notify(title, text, duration)
     end)
 end
 
--- [ 2. KEY SİSTEMİ (Border ve Resim Eklendi) ]
+-- [2. KEY SİSTEMİ]
 function Library:InitKeySystem(cfg)
     local CorrectKey = cfg.Key or "key"
     local KeyLink = cfg.Link or "link"
+    local CustomBg = cfg.CustomBackground -- Image ID veya nil/false
     local Callback = cfg.Callback
 
     local KeyGui = Instance.new("ScreenGui", CoreGui)
     KeyGui.Name = "TR_VOID_KEYSYS"
 
-    -- Gölge ve Dış Çerçeve (Border)
-    local KeyShadow = Instance.new("Frame", KeyGui)
-    KeyShadow.Size = UDim2.new(0, 354, 0, 224)
-    KeyShadow.Position = UDim2.new(0.5, -177, 0.5, -112)
-    KeyShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    KeyShadow.BackgroundTransparency = 0.3
-    Instance.new("UICorner", KeyShadow).CornerRadius = UDim.new(0, 12)
+    local Shadow = Instance.new("Frame", KeyGui)
+    Shadow.Size = UDim2.new(0, 356, 0, 226)
+    Shadow.Position = UDim2.new(0.5, -178, 0.5, -113)
+    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Shadow.BackgroundTransparency = 0.5
+    Instance.new("UICorner", Shadow).CornerRadius = UDim.new(0, 12)
 
     local KeyFrame = Instance.new("Frame", KeyGui)
-    KeyFrame.Name = "KeyFrame"
-    KeyFrame.Parent = KeyGui
     KeyFrame.Size = UDim2.new(0, 350, 0, 220)
     KeyFrame.Position = UDim2.new(0.5, -175, 0.5, -110)
     KeyFrame.BackgroundColor3 = Theme.Main
     KeyFrame.ClipsDescendants = true
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
-    local Stroke = Instance.new("UIStroke", KeyFrame)
-    Stroke.Color = Color3.fromRGB(45, 45, 50)
-    Stroke.Thickness = 2
+    local MainStroke = Instance.new("UIStroke", KeyFrame)
+    MainStroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- İstediğin Resim Asset ID
-    local BgImage = Instance.new("ImageLabel", KeyFrame)
-    BgImage.Size = UDim2.new(1, 0, 1, 0)
-    BgImage.Image = "rbxassetid://99502520832764"
-    BgImage.ImageTransparency = 0.85
-    BgImage.BackgroundTransparency = 1
-    BgImage.ZIndex = 0
+    -- Arka Plan Ayarı
+    if CustomBg then
+        local BgImage = Instance.new("ImageLabel", KeyFrame)
+        BgImage.Size = UDim2.new(1, 0, 1, 0)
+        BgImage.Image = "rbxassetid://" .. tostring(CustomBg)
+        BgImage.ImageTransparency = 0.8
+        BgImage.BackgroundTransparency = 1
+        BgImage.ZIndex = 0
+    else
+        -- Gri Çizgi Animasyonu (Scanning Effect)
+        local Line = Instance.new("Frame", KeyFrame)
+        Line.Size = UDim2.new(0, 2, 1, 0)
+        Line.Position = UDim2.new(-0.1, 0, 0, 0)
+        Line.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+        Line.BackgroundTransparency = 0.6
+        Line.BorderSizePixel = 0
+        Line.ZIndex = 1
+
+        local function RunAnim()
+            Line.Position = UDim2.new(-0.1, 0, 0, 0)
+            local t = TweenService:Create(Line, TweenInfo.new(2, Enum.EasingStyle.Linear), {Position = UDim2.new(1.1, 0, 0, 0)})
+            t:Play()
+            t.Completed:Connect(function()
+                task.wait(0.1)
+                RunAnim()
+            end)
+        end
+        RunAnim()
+    end
 
     local Title = Instance.new("TextLabel", KeyFrame)
-    Title.Parent = KeyFrame
     Title.Size = UDim2.new(1, 0, 0, 60)
     Title.BackgroundTransparency = 1
     Title.Text = "TR-VOID | KEY SYSTEM"
     Title.TextColor3 = Theme.Text
     Title.Font = Enum.Font.GothamBold
     Title.TextSize = 20
-    Title.ZIndex = 2
+    Title.ZIndex = 5
 
     local KeyInput = Instance.new("TextBox", KeyFrame)
     KeyInput.Size = UDim2.new(0.85, 0, 0, 45)
     KeyInput.Position = UDim2.new(0.075, 0, 0.35, 0)
     KeyInput.BackgroundColor3 = Theme.Element
-    KeyInput.PlaceholderText = "Enter the key..."
+    KeyInput.PlaceholderText = "Enter key..."
     KeyInput.Text = ""
     KeyInput.TextColor3 = Theme.Text
     KeyInput.Font = Enum.Font.Gotham
-    KeyInput.ZIndex = 2
+    KeyInput.ZIndex = 5
     Instance.new("UICorner", KeyInput)
     local InpStroke = Instance.new("UIStroke", KeyInput)
     InpStroke.Color = Color3.fromRGB(50, 50, 55)
@@ -127,7 +146,7 @@ function Library:InitKeySystem(cfg)
     VerifyBtn.Text = "Verify Key"
     VerifyBtn.TextColor3 = Theme.Text
     VerifyBtn.Font = Enum.Font.GothamBold
-    VerifyBtn.ZIndex = 2
+    VerifyBtn.ZIndex = 5
     Instance.new("UICorner", VerifyBtn)
 
     local GetBtn = Instance.new("TextButton", KeyFrame)
@@ -137,37 +156,27 @@ function Library:InitKeySystem(cfg)
     GetBtn.Text = "Get Key"
     GetBtn.TextColor3 = Theme.Text
     GetBtn.Font = Enum.Font.GothamBold
-    GetBtn.ZIndex = 2
+    GetBtn.ZIndex = 5
     Instance.new("UICorner", GetBtn)
 
     GetBtn.MouseButton1Click:Connect(function()
         setclipboard(KeyLink)
-        Library:Notify("System", "Key link copied to clipboard!", 3)
+        Library:Notify("System", "Key link copied!", 2)
     end)
 
     VerifyBtn.MouseButton1Click:Connect(function()
         if KeyInput.Text == CorrectKey then
-            InpStroke.Color = Theme.Success
-            VerifyBtn.Text = "Access Granted!"
-            local tween = TweenService:Create(KeyFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Position = UDim2.new(0.5, -175, 1, 50)})
-            local stween = TweenService:Create(KeyShadow, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Position = UDim2.new(0.5, -177, 1, 50)})
-            tween:Play()
-            stween:Play()
-            task.wait(0.5)
             KeyGui:Destroy()
             Callback()
         else
             InpStroke.Color = Theme.Error
-            KeyInput.Text = ""
-            KeyInput.PlaceholderText = "Invalid Key!"
-            task.wait(1.5)
+            task.wait(1)
             InpStroke.Color = Color3.fromRGB(50, 50, 55)
-            KeyInput.PlaceholderText = "Enter the key..."
         end
     end)
 end
 
--- [ 3. ANA PENCERE SİSTEMİ ]
+-- [3. ANA PENCERE]
 function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 480
@@ -177,23 +186,6 @@ function Library:CreateWindow(cfg)
     local ScreenGui = Instance.new("ScreenGui", CoreGui)
     ScreenGui.Name = "TR_VOID_UI"
 
-    -- Aç/Kapat Butonu
-    local OpenFrame = Instance.new("Frame", ScreenGui)
-    OpenFrame.Size = UDim2.new(0, 80, 0, 35)
-    OpenFrame.Position = UDim2.new(0, 10, 0, 30)
-    OpenFrame.BackgroundColor3 = Theme.Main
-    OpenFrame.Visible = false
-    Instance.new("UICorner", OpenFrame)
-    Instance.new("UIStroke", OpenFrame).Color = Theme.Accent
-
-    local OpenBtn = Instance.new("TextButton", OpenFrame)
-    OpenBtn.Size = UDim2.new(1, 0, 1, 0)
-    OpenBtn.BackgroundTransparency = 1
-    OpenBtn.Text = "OPEN"
-    OpenBtn.TextColor3 = Theme.Text
-    OpenBtn.Font = Enum.Font.GothamBold
-    OpenBtn.TextSize = 14
-
     local Main = Instance.new("Frame", ScreenGui)
     Main.BackgroundColor3 = Theme.Main
     Main.Position = UDim2.new(0.5, -WindowWidth/2, 0.5, -WindowHeight/2)
@@ -202,7 +194,7 @@ function Library:CreateWindow(cfg)
     local MainStroke = Instance.new("UIStroke", Main)
     MainStroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- Sürükleme Sistemi
+    -- Dragging
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -231,23 +223,6 @@ function Library:CreateWindow(cfg)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    local CloseBtn = Instance.new("TextButton", TopBar)
-    CloseBtn.Size = UDim2.new(0, 26, 0, 26)
-    CloseBtn.Position = UDim2.new(1, -35, 0, 7)
-    CloseBtn.BackgroundColor3 = Theme.Error
-    CloseBtn.Text = "X"
-    CloseBtn.TextColor3 = Theme.Text
-    Instance.new("UICorner", CloseBtn)
-    
-    CloseBtn.MouseButton1Click:Connect(function()
-        Main.Visible = false
-        OpenFrame.Visible = true
-    end)
-    OpenBtn.MouseButton1Click:Connect(function()
-        Main.Visible = true
-        OpenFrame.Visible = false
-    end)
-
     local TabBar = Instance.new("ScrollingFrame", Main)
     TabBar.Position = UDim2.new(0, 10, 0, 45)
     TabBar.Size = UDim2.new(1, -20, 0, 40)
@@ -274,10 +249,10 @@ function Library:CreateWindow(cfg)
         TabBtn.Text = name
         TabBtn.TextColor3 = Theme.SecondaryText
         TabBtn.Font = Enum.Font.GothamBold
-        TabBtn.TextSize = 15
+        TabBtn.TextSize = 14
         Instance.new("UICorner", TabBtn)
-        local textS = TextService:GetTextSize(name, 15, Enum.Font.GothamBold, Vector2.new(1000, 40))
-        TabBtn.Size = UDim2.new(0, textS.X + 30, 0, 32)
+        local ts = TextService:GetTextSize(name, 14, Enum.Font.GothamBold, Vector2.new(1000, 32))
+        TabBtn.Size = UDim2.new(0, ts.X + 25, 0, 30)
 
         local Container = Instance.new("ScrollingFrame", ContainerHolder)
         Container.Size = UDim2.new(1, 0, 1, 0)
@@ -287,7 +262,7 @@ function Library:CreateWindow(cfg)
         Container.ScrollBarImageColor3 = Theme.Accent
         
         local ContentLayout = Instance.new("UIListLayout", Container)
-        ContentLayout.Padding = UDim.new(0, 10)
+        ContentLayout.Padding = UDim.new(0, 8)
         ContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
         ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -305,7 +280,6 @@ function Library:CreateWindow(cfg)
 
         local Elements = {}
 
-        -- [ BUTTON ]
         function Elements:CreateButton(text, callback)
             local Button = Instance.new("TextButton", Container)
             Button.BackgroundColor3 = Theme.Element
@@ -315,11 +289,10 @@ function Library:CreateWindow(cfg)
             Button.Font = Enum.Font.GothamSemibold
             Button.TextSize = MainFontSize
             Button.TextXAlignment = Enum.TextXAlignment.Left
-            Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
+            Instance.new("UICorner", Button)
             Button.MouseButton1Click:Connect(callback)
         end
 
-        -- [ TOGGLE ]
         function Elements:CreateToggle(text, callback)
             local state = false
             local ToggleBtn = Instance.new("TextButton", Container)
@@ -352,7 +325,6 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [ SLIDER ]
         function Elements:CreateSlider(text, min, max, default, callback)
             local SliderFrame = Instance.new("Frame", Container)
             SliderFrame.BackgroundColor3 = Theme.Element
@@ -401,7 +373,6 @@ function Library:CreateWindow(cfg)
             UserInputService.InputEnded:Connect(function() sliding = false end)
         end
 
-        -- [ DROPDOWN ]
         function Elements:CreateDropdown(text, list, callback)
             local open = false
             local DropFrame = Instance.new("Frame", Container)
@@ -449,7 +420,6 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [ MULTI DROPDOWN ]
         function Elements:CreateMultiDropdown(text, list, callback)
             local selected = {}
             local open = false
@@ -503,40 +473,6 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [ INPUT ]
-        function Elements:CreateInput(text, placeholder, callback)
-            local InpFrame = Instance.new("Frame", Container)
-            InpFrame.BackgroundColor3 = Theme.Element
-            InpFrame.Size = UDim2.new(0.96, 0, 0, 55)
-            Instance.new("UICorner", InpFrame)
-
-            local InpTitle = Instance.new("TextLabel", InpFrame)
-            InpTitle.Size = UDim2.new(1, 0, 0, 25)
-            InpTitle.Position = UDim2.new(0, 10, 0, 2)
-            InpTitle.BackgroundTransparency = 1
-            InpTitle.Text = text
-            InpTitle.TextColor3 = Theme.SecondaryText
-            InpTitle.Font = Enum.Font.Gotham
-            InpTitle.TextSize = 13
-            InpTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-            local Box = Instance.new("TextBox", InpFrame)
-            Box.Size = UDim2.new(1, -20, 0, 25)
-            Box.Position = UDim2.new(0, 10, 0, 25)
-            Box.BackgroundColor3 = Theme.Main
-            Box.PlaceholderText = placeholder
-            Box.Text = ""
-            Box.TextColor3 = Theme.Text
-            Box.Font = Enum.Font.Gotham
-            Box.TextSize = MainFontSize
-            Instance.new("UICorner", Box)
-            
-            Box.FocusLost:Connect(function(enter)
-                if enter then callback(Box.Text) end
-            end)
-        end
-
-        -- [ FPS/PING/EXPLOIT STATS ]
         function Elements:AddStats()
             local StatLabel = Instance.new("TextLabel", Container)
             StatLabel.Size = UDim2.new(0.96, 0, 0, 70)
