@@ -1,8 +1,8 @@
 --[[
     TR-VOID UI LIBRARY
     Developer: Hasan (hasancoder54)
-    Version: 2.2
-    Fix: Text is forced to "OPEN", Position is 2 clicks below top-left.
+    Version: 2.3
+    Update: Added Custom TextSize for Buttons and Toggles
 ]]
 
 local Library = {}
@@ -24,24 +24,19 @@ function Library:CreateWindow(cfg)
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
     OpenButtonFrame.Position = UDim2.new(0, 15, 0, -250)
-    OpenButtonFrame.Size = UDim2.new(0, 60, 0, 40) -- OPEN yazısı sığsın diye genişlik 60 yapıldı
+    OpenButtonFrame.Size = UDim2.new(0, 60, 0, 40)
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
     OpenCorner.CornerRadius = UDim.new(0, 10)
     OpenCorner.Parent = OpenButtonFrame
 
-    local OpenStroke = Instance.new("UIStroke")
-    OpenStroke.Color = Color3.fromRGB(255, 255, 255)
-    OpenStroke.Transparency = 0.7
-    OpenStroke.Parent = OpenButtonFrame
-
     local OpenText = Instance.new("TextButton")
     OpenText.Parent = OpenButtonFrame
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "OPEN" -- KESİN OLARAK OPEN
+    OpenText.Text = "OPEN"
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
     OpenText.TextSize = 12
 
@@ -115,17 +110,14 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            -- Pozisyon 2 tık aşağı (Y: 10)
             OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 10), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA
     OpenText.MouseButton1Click:Connect(function()
         OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -250), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
@@ -157,7 +149,9 @@ function Library:CreateWindow(cfg)
 
     local Elements = {}
 
-    function Elements:CreateButton(name, callback)
+    -- [BUTTON WITH TEXTSIZE]
+    function Elements:CreateButton(name, size, callback)
+        local ButtonSize = size or 14 -- Varsayılan 14
         local Button = Instance.new("TextButton")
         Button.Parent = Container
         Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -165,6 +159,7 @@ function Library:CreateWindow(cfg)
         Button.Font = Enum.Font.Gotham
         Button.Text = "  " .. name
         Button.TextColor3 = Color3.fromRGB(220, 220, 220)
+        Button.TextSize = ButtonSize
         Button.TextXAlignment = Enum.TextXAlignment.Left
         Button.AutoButtonColor = false
         local Corner = Instance.new("UICorner")
@@ -178,7 +173,9 @@ function Library:CreateWindow(cfg)
         end)
     end
 
-    function Elements:CreateToggle(name, callback)
+    -- [TOGGLE WITH TEXTSIZE]
+    function Elements:CreateToggle(name, size, callback)
+        local TextSizeValue = size or 14 -- Varsayılan 14
         local state = "neutral"
         local callback = callback or function() end
         local ToggleBtn = Instance.new("TextButton")
@@ -195,6 +192,7 @@ function Library:CreateWindow(cfg)
         TTitle.Text = "  " .. name
         TTitle.Font = Enum.Font.Gotham
         TTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
+        TTitle.TextSize = TextSizeValue
         TTitle.TextXAlignment = Enum.TextXAlignment.Left
         TTitle.Size = UDim2.new(1, 0, 1, 0)
         TTitle.BackgroundTransparency = 1
