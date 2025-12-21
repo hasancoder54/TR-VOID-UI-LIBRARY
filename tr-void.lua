@@ -1,9 +1,8 @@
 --[[
-    TR-VOID UI LIBRARY (ULTRA PACK)
+    TR-VOID UI LIBRARY (FINAL VERSION)
     Developer: Hasan (hasancoder54)
     Version: 3.0
-    Updates: Tab System, Button, Toggle, Slider, Input, Dropdown
-    Features: Auto-Resizing, Custom Text Size, Draggable, Logo-Aligned Open Button
+    Repo: https://github.com/hasancoder54/TR-VOID-UI-LIBRARY
 ]]
 
 local Library = {}
@@ -12,6 +11,7 @@ local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local TextService = game:GetService("TextService")
 
+-- [TEMA AYARLARI]
 Library.Themes = {
     ["Void"] = {
         Main = Color3.fromRGB(15, 15, 15),
@@ -29,7 +29,7 @@ function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 450
     local WindowHeight = cfg.Height or 350
-    local DefaultTextSize = cfg.TextSize or 14
+    local GlobalTextSize = cfg.TextSize or 14
     
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "TR_VOID_UI_" .. math.random(100,999)
@@ -40,7 +40,7 @@ function Library:CreateWindow(cfg)
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = CurrentTheme.Main
-    OpenButtonFrame.Position = UDim2.new(0, 10, 0, 45) 
+    OpenButtonFrame.Position = UDim2.new(0, 10, 0, 45) -- Roblox logosunun hemen altı
     OpenButtonFrame.Size = UDim2.new(0, 60, 0, 30)
     OpenButtonFrame.Visible = false
     Instance.new("UICorner", OpenButtonFrame).CornerRadius = UDim.new(0, 8)
@@ -69,7 +69,7 @@ function Library:CreateWindow(cfg)
     TopBar.Parent = Main
     Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 12)
 
-    -- Sürükleme (Drag)
+    -- Sürükleme (Drag) Sistemi
     local dragging, dragInput, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dragStart = input.Position; startPos = Main.Position end
@@ -101,7 +101,7 @@ function Library:CreateWindow(cfg)
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0, 8)
 
-    -- [TAB SEKMELERI]
+    -- [SEKME BAR VE KONTEYNER]
     local TabBar = Instance.new("ScrollingFrame")
     TabBar.Parent = Main
     TabBar.Position = UDim2.new(0, 5, 0, 40)
@@ -141,7 +141,6 @@ function Library:CreateWindow(cfg)
         TabButton.TextSize = 12
         Instance.new("UICorner", TabButton).CornerRadius = UDim.new(0, 6)
         
-        -- Otomatik Tab Genişliği
         local tSize = TextService:GetTextSize(tabName, 12, Enum.Font.GothamBold, Vector2.new(1000, 30))
         TabButton.Size = UDim2.new(0, tSize.X + 20, 1, 0)
         TabBar.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 0, 0)
@@ -161,14 +160,14 @@ function Library:CreateWindow(cfg)
         end)
 
         TabButton.MouseButton1Click:Connect(function()
-            for _, v in pairs(ContainerHolder:GetChildren()) do v.Visible = false end
+            for _, v in pairs(ContainerHolder:GetChildren()) do if v:IsA("ScrollingFrame") then v.Visible = false end end
             Container.Visible = true
         end)
 
         FirstTab = false
         local Elements = {}
 
-        -- [BUTTON]
+        -- BUTTON
         function Elements:CreateButton(name, callback)
             local Button = Instance.new("TextButton")
             Button.Parent = Container
@@ -177,13 +176,13 @@ function Library:CreateWindow(cfg)
             Button.Text = "  " .. name
             Button.TextColor3 = CurrentTheme.Text
             Button.Font = Enum.Font.Gotham
-            Button.TextSize = DefaultTextSize
+            Button.TextSize = GlobalTextSize
             Button.TextXAlignment = Enum.TextXAlignment.Left
             Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
             Button.MouseButton1Click:Connect(callback)
         end
 
-        -- [TOGGLE]
+        -- TOGGLE
         function Elements:CreateToggle(name, callback)
             local state = false
             local Toggle = Instance.new("TextButton")
@@ -193,7 +192,7 @@ function Library:CreateWindow(cfg)
             Toggle.Text = "  " .. name
             Toggle.TextColor3 = CurrentTheme.Text
             Toggle.Font = Enum.Font.Gotham
-            Toggle.TextSize = DefaultTextSize
+            Toggle.TextSize = GlobalTextSize
             Toggle.TextXAlignment = Enum.TextXAlignment.Left
             Instance.new("UICorner", Toggle).CornerRadius = UDim.new(0, 8)
             
@@ -211,7 +210,7 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [SLIDER]
+        -- SLIDER
         function Elements:CreateSlider(name, min, max, default, callback)
             local SliderFrame = Instance.new("Frame")
             SliderFrame.Parent = Container
@@ -226,14 +225,13 @@ function Library:CreateWindow(cfg)
             Label.TextColor3 = CurrentTheme.Text
             Label.BackgroundTransparency = 1
             Label.TextXAlignment = Enum.TextXAlignment.Left
-            Label.TextSize = DefaultTextSize
+            Label.TextSize = GlobalTextSize
 
             local Bar = Instance.new("Frame")
             Bar.Parent = SliderFrame
             Bar.Position = UDim2.new(0, 10, 0, 25)
             Bar.Size = UDim2.new(1, -20, 0, 6)
             Bar.BackgroundColor3 = CurrentTheme.Main
-            Instance.new("UICorner", Bar)
             
             local Fill = Instance.new("Frame")
             Fill.Parent = Bar
@@ -251,7 +249,7 @@ function Library:CreateWindow(cfg)
             Bar.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then move(input) end end)
         end
 
-        -- [INPUT / TEXTBOX]
+        -- INPUT
         function Elements:CreateInput(name, placeholder, callback)
             local InputFrame = Instance.new("Frame")
             InputFrame.Parent = Container
@@ -269,15 +267,13 @@ function Library:CreateWindow(cfg)
             TextBox.TextColor3 = CurrentTheme.Text
             TextBox.PlaceholderColor3 = CurrentTheme.Placeholder
             TextBox.Font = Enum.Font.Gotham
-            TextBox.TextSize = DefaultTextSize
+            TextBox.TextSize = GlobalTextSize
             TextBox.TextXAlignment = Enum.TextXAlignment.Left
 
-            TextBox.FocusLost:Connect(function(enter)
-                if enter then callback(TextBox.Text) end
-            end)
+            TextBox.FocusLost:Connect(function(enter) if enter then callback(TextBox.Text) end end)
         end
 
-        -- [DROPDOWN]
+        -- DROPDOWN
         function Elements:CreateDropdown(name, list, callback)
             local open = false
             local DropFrame = Instance.new("Frame")
@@ -294,7 +290,7 @@ function Library:CreateWindow(cfg)
             DropBtn.Text = "  " .. name .. " (Seçiniz)"
             DropBtn.TextColor3 = CurrentTheme.Text
             DropBtn.Font = Enum.Font.Gotham
-            DropBtn.TextSize = DefaultTextSize
+            DropBtn.TextSize = GlobalTextSize
             DropBtn.TextXAlignment = Enum.TextXAlignment.Left
 
             DropBtn.MouseButton1Click:Connect(function()
