@@ -1,9 +1,9 @@
 
 --[[
-    TR-VOID UI LIBRARY (EXTREME TOP VERSION)
+    TR-VOID UI LIBRARY (MOBILE LOGO VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.7
-    Fix: Triple Top Open Button & Smart Toggle Logic
+    Version: 1.8
+    Update: Open Button moved under Roblox Logo (Top Left, Square)
 ]]
 
 local Library = {}
@@ -19,18 +19,17 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - 3 KATI YUKARI ÇIKARTILDI]
+    -- [OPEN BUTTON - ROBLOX LOGOSUNUN ALTI (SOL ÜST)]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -300) -- Başlangıçta 3 katı yukarıda gizli
-    OpenButtonFrame.Size = UDim2.new(0, 80, 0, 30)
-    OpenButtonFrame.BorderSizePixel = 0
+    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -60) -- Başlangıçta ekranın üstünde gizli
+    OpenButtonFrame.Size = UDim2.new(0, 45, 0, 45) -- Kare Form
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
-    OpenCorner.CornerRadius = UDim.new(0, 8)
+    OpenCorner.CornerRadius = UDim.new(0, 10) -- Yumuşak Köşeler
     OpenCorner.Parent = OpenButtonFrame
 
     local OpenStroke = Instance.new("UIStroke")
@@ -43,11 +42,11 @@ function Library:CreateWindow(cfg)
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "OPEN"
+    OpenText.Text = "VOID" -- Kare olduğu için kısa metin daha iyi durur
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    OpenText.TextSize = 11
+    OpenText.TextSize = 10
 
-    -- [MAIN FRAME]
+    -- [MAIN MENU FRAME]
     local Main = Instance.new("Frame")
     Main.Name = "Main"
     Main.Parent = ScreenGui
@@ -117,19 +116,18 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA: Butonu en yukarıya, ekranın tam tepesine sıfırlar
+    -- KAPATMA: Butonu Roblox logosunun hemen altına (Y: 50 civarı) getirir
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            -- Pozisyonu 0 yaparak ekranın tam tavanına oturttum
-            OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, 0), "Out", "Back", 0.5, true)
+            OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 50), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA: Butonu 3 katı yukarıya (-300) fırlatır
+    -- AÇMA: Butonu ekranın üstüne geri saklar
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -300), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -60), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
@@ -192,14 +190,14 @@ function Library:CreateWindow(cfg)
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0, 6)
         Corner.Parent = ToggleBtn
-        local Title = Instance.new("TextLabel")
-        Title.Parent = ToggleBtn
-        Title.Text = "  " .. name
-        Title.Font = Enum.Font.Gotham
-        Title.TextColor3 = Color3.fromRGB(220, 220, 220)
-        Title.TextXAlignment = Enum.TextXAlignment.Left
-        Title.Size = UDim2.new(1, 0, 1, 0)
-        Title.BackgroundTransparency = 1
+        local TTitle = Instance.new("TextLabel")
+        TTitle.Parent = ToggleBtn
+        TTitle.Text = "  " .. name
+        TTitle.Font = Enum.Font.Gotham
+        TTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
+        TTitle.TextXAlignment = Enum.TextXAlignment.Left
+        TTitle.Size = UDim2.new(1, 0, 1, 0)
+        TTitle.BackgroundTransparency = 1
         local Switch = Instance.new("Frame")
         Switch.Parent = ToggleBtn
         Switch.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
