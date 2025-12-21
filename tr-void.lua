@@ -1,8 +1,12 @@
 --[[
-    TR-VOID UI LIBRARY (FINAL VERSION)
+    TR-VOID UI LIBRARY (EN VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 3.0
-    Repo: https://github.com/hasancoder54/TR-VOID-UI-LIBRARY
+    Version: 3.1
+    Updates: 
+    - Language: English
+    - Open Button: Higher position (Top Left)
+    - Slider: Fixed Input logic
+    - Tab System & Auto-Resize
 ]]
 
 local Library = {}
@@ -11,7 +15,6 @@ local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local TextService = game:GetService("TextService")
 
--- [TEMA AYARLARI]
 Library.Themes = {
     ["Void"] = {
         Main = Color3.fromRGB(15, 15, 15),
@@ -36,12 +39,12 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - ROBLOX LOGO ALTI]
+    -- [OPEN BUTTON - HIGHER POSITION]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = CurrentTheme.Main
-    OpenButtonFrame.Position = UDim2.new(0, 10, 0, 45) -- Roblox logosunun hemen altı
-    OpenButtonFrame.Size = UDim2.new(0, 60, 0, 30)
+    OpenButtonFrame.Position = UDim2.new(0, 10, 0, 35) -- More Upward
+    OpenButtonFrame.Size = UDim2.new(0, 70, 0, 30)
     OpenButtonFrame.Visible = false
     Instance.new("UICorner", OpenButtonFrame).CornerRadius = UDim.new(0, 8)
 
@@ -50,7 +53,7 @@ function Library:CreateWindow(cfg)
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "AÇ"
+    OpenText.Text = "OPEN"
     OpenText.TextColor3 = CurrentTheme.Accent
     OpenText.TextSize = 12
 
@@ -69,7 +72,6 @@ function Library:CreateWindow(cfg)
     TopBar.Parent = Main
     Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 12)
 
-    -- Sürükleme (Drag) Sistemi
     local dragging, dragInput, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true; dragStart = input.Position; startPos = Main.Position end
@@ -101,7 +103,6 @@ function Library:CreateWindow(cfg)
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0, 8)
 
-    -- [SEKME BAR VE KONTEYNER]
     local TabBar = Instance.new("ScrollingFrame")
     TabBar.Parent = Main
     TabBar.Position = UDim2.new(0, 5, 0, 40)
@@ -167,7 +168,6 @@ function Library:CreateWindow(cfg)
         FirstTab = false
         local Elements = {}
 
-        -- BUTTON
         function Elements:CreateButton(name, callback)
             local Button = Instance.new("TextButton")
             Button.Parent = Container
@@ -182,7 +182,6 @@ function Library:CreateWindow(cfg)
             Button.MouseButton1Click:Connect(callback)
         end
 
-        -- TOGGLE
         function Elements:CreateToggle(name, callback)
             local state = false
             local Toggle = Instance.new("TextButton")
@@ -210,7 +209,7 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- SLIDER
+        -- [FIXED SLIDER]
         function Elements:CreateSlider(name, min, max, default, callback)
             local SliderFrame = Instance.new("Frame")
             SliderFrame.Parent = Container
@@ -232,6 +231,7 @@ function Library:CreateWindow(cfg)
             Bar.Position = UDim2.new(0, 10, 0, 25)
             Bar.Size = UDim2.new(1, -20, 0, 6)
             Bar.BackgroundColor3 = CurrentTheme.Main
+            Instance.new("UICorner", Bar)
             
             local Fill = Instance.new("Frame")
             Fill.Parent = Bar
@@ -246,10 +246,26 @@ function Library:CreateWindow(cfg)
                 Label.Text = "  " .. name .. ": " .. val
                 callback(val)
             end
-            Bar.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then move(input) end end)
+
+            local sliding = false
+            Bar.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    sliding = true
+                    move(input)
+                end
+            end)
+            UserInputService.InputChanged:Connect(function(input)
+                if sliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                    move(input)
+                end
+            end)
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    sliding = false
+                end
+            end)
         end
 
-        -- INPUT
         function Elements:CreateInput(name, placeholder, callback)
             local InputFrame = Instance.new("Frame")
             InputFrame.Parent = Container
@@ -273,7 +289,6 @@ function Library:CreateWindow(cfg)
             TextBox.FocusLost:Connect(function(enter) if enter then callback(TextBox.Text) end end)
         end
 
-        -- DROPDOWN
         function Elements:CreateDropdown(name, list, callback)
             local open = false
             local DropFrame = Instance.new("Frame")
@@ -287,7 +302,7 @@ function Library:CreateWindow(cfg)
             DropBtn.Parent = DropFrame
             DropBtn.Size = UDim2.new(1, 0, 0, 35)
             DropBtn.BackgroundTransparency = 1
-            DropBtn.Text = "  " .. name .. " (Seçiniz)"
+            DropBtn.Text = "  " .. name .. " (Select)"
             DropBtn.TextColor3 = CurrentTheme.Text
             DropBtn.Font = Enum.Font.Gotham
             DropBtn.TextSize = GlobalTextSize
