@@ -6,7 +6,7 @@ local TextService = game:GetService("TextService")
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 
--- Renk Paleti (Dark Blue Theme)
+-- Renk Paleti
 local Theme = {
     Main = Color3.fromRGB(15, 15, 18),
     TopBar = Color3.fromRGB(22, 22, 26),
@@ -23,13 +23,10 @@ local Theme = {
 function Library:Notify(title, text, duration)
     local NotifyGui = CoreGui:FindFirstChild("TR_VOID_NOTIFY") or Instance.new("ScreenGui", CoreGui)
     NotifyGui.Name = "TR_VOID_NOTIFY"
-
-    local Notif = Instance.new("Frame")
-    Notif.Parent = NotifyGui
+    local Notif = Instance.new("Frame", NotifyGui)
     Notif.Size = UDim2.new(0, 240, 0, 65)
     Notif.Position = UDim2.new(1, 20, 1, -100)
     Notif.BackgroundColor3 = Theme.Main
-    
     Instance.new("UICorner", Notif).CornerRadius = UDim.new(0, 8)
     local Stroke = Instance.new("UIStroke", Notif)
     Stroke.Color = Theme.Accent
@@ -56,19 +53,20 @@ function Library:Notify(title, text, duration)
     ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     Notif:TweenPosition(UDim2.new(1, -250, 1, -100), "Out", "Quart", 0.5, true)
-    
     task.delay(duration or 3, function()
-        Notif:TweenPosition(UDim2.new(1, 20, 1, -100), "In", "Quart", 0.5, true)
-        task.wait(0.5)
-        Notif:Destroy()
+        if Notif then
+            Notif:TweenPosition(UDim2.new(1, 20, 1, -100), "In", "Quart", 0.5, true)
+            task.wait(0.5)
+            Notif:Destroy()
+        end
     end)
 end
 
--- [2. KEY SİSTEMİ]
+-- [2. KEY SİSTEMİ (RESİM VE BORDER DAHİL)]
 function Library:InitKeySystem(cfg)
     local CorrectKey = cfg.Key or "key"
     local KeyLink = cfg.Link or "link"
-    local CustomBg = cfg.BackgroundId or "99502520832764"
+    local CustomBg = cfg.BackgroundId or "120556863970275"
     local Callback = cfg.Callback
 
     local KeyGui = Instance.new("ScreenGui", CoreGui)
@@ -87,19 +85,18 @@ function Library:InitKeySystem(cfg)
     KeyFrame.ClipsDescendants = true
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 10)
 
-    -- RESİM BURADA (ZIndex 0 yapıldı ki en arkada kalsın)
     local BgImage = Instance.new("ImageLabel", KeyFrame)
     BgImage.Size = UDim2.new(1, 0, 1, 0)
     BgImage.BackgroundTransparency = 1
     BgImage.ZIndex = 0
     BgImage.Image = "rbxassetid://" .. CustomBg
-    BgImage.ImageTransparency = 0.5 -- Görünmesi için 0.5 yapıldı
+    BgImage.ImageTransparency = 0.4
     BgImage.ScaleType = Enum.ScaleType.Fill
 
     local UIContent = Instance.new("Frame", KeyFrame)
     UIContent.Size = UDim2.new(1, 0, 1, 0)
     UIContent.BackgroundTransparency = 1
-    UIContent.ZIndex = 5 -- Objeler resmin üstünde dursun
+    UIContent.ZIndex = 5
 
     local Title = Instance.new("TextLabel", UIContent)
     Title.Size = UDim2.new(1, 0, 0, 60)
@@ -113,7 +110,7 @@ function Library:InitKeySystem(cfg)
     KeyInput.Size = UDim2.new(0.85, 0, 0, 45)
     KeyInput.Position = UDim2.new(0.075, 0, 0.35, 0)
     KeyInput.BackgroundColor3 = Theme.Element
-    KeyInput.PlaceholderText = "Enter the key..."
+    KeyInput.PlaceholderText = "Enter key..."
     KeyInput.Text = ""
     KeyInput.TextColor3 = Theme.Text
     KeyInput.Font = Enum.Font.Gotham
@@ -126,7 +123,7 @@ function Library:InitKeySystem(cfg)
     VerifyBtn.Size = UDim2.new(0.4, 0, 0, 40)
     VerifyBtn.Position = UDim2.new(0.075, 0, 0.7, 0)
     VerifyBtn.BackgroundColor3 = Theme.Accent
-    VerifyBtn.Text = "Verify Key"
+    VerifyBtn.Text = "Verify"
     VerifyBtn.TextColor3 = Theme.Text
     VerifyBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", VerifyBtn)
@@ -140,24 +137,13 @@ function Library:InitKeySystem(cfg)
     GetBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", GetBtn)
 
-    GetBtn.MouseButton1Click:Connect(function()
-        setclipboard(KeyLink)
-        Library:Notify("System", "Link copied!", 3)
-    end)
-
+    GetBtn.MouseButton1Click:Connect(function() setclipboard(KeyLink) Library:Notify("System", "Link copied!", 3) end)
     VerifyBtn.MouseButton1Click:Connect(function()
-        if KeyInput.Text == CorrectKey then
-            KeyGui:Destroy()
-            Callback()
-        else
-            InpStroke.Color = Theme.Error
-            task.wait(1)
-            InpStroke.Color = Color3.fromRGB(50, 50, 55)
-        end
+        if KeyInput.Text == CorrectKey then KeyGui:Destroy() Callback() else InpStroke.Color = Theme.Error task.wait(1) InpStroke.Color = Color3.fromRGB(50, 50, 55) end
     end)
 end
 
--- [3. ANA PENCERE]
+-- [3. ANA PENCERE VE OPEN BUTONU]
 function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 480
@@ -167,7 +153,7 @@ function Library:CreateWindow(cfg)
     local ScreenGui = Instance.new("ScreenGui", CoreGui)
     ScreenGui.Name = "TR_VOID_UI"
 
-    -- [OPEN BUTONU DÜZELTİLDİ]
+    -- [OPEN BUTONU]
     local OpenFrame = Instance.new("Frame", ScreenGui)
     OpenFrame.Size = UDim2.new(0, 80, 0, 30)
     OpenFrame.Position = UDim2.new(0, 10, 0, 10)
@@ -175,7 +161,9 @@ function Library:CreateWindow(cfg)
     OpenFrame.Visible = false
     OpenFrame.ZIndex = 100
     Instance.new("UICorner", OpenFrame)
-    Instance.new("UIStroke", OpenFrame).Color = Theme.Accent
+    local OpenStroke = Instance.new("UIStroke", OpenFrame)
+    OpenStroke.Color = Theme.Accent
+    OpenStroke.Thickness = 1.5
 
     local OpenBtn = Instance.new("TextButton", OpenFrame)
     OpenBtn.Size = UDim2.new(1, 0, 1, 0)
@@ -196,17 +184,8 @@ function Library:CreateWindow(cfg)
 
     -- Sürükleme
     local dragging, dragStart, startPos
-    Main.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true; dragStart = input.Position; startPos = Main.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
+    Main.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = true; dragStart = input.Position; startPos = Main.Position end end)
+    UserInputService.InputChanged:Connect(function(input) if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then local delta = input.Position - dragStart Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y) end end)
     UserInputService.InputEnded:Connect(function() dragging = false end)
 
     local TopBar = Instance.new("Frame", Main)
@@ -216,7 +195,7 @@ function Library:CreateWindow(cfg)
 
     local TitleLabel = Instance.new("TextLabel", TopBar)
     TitleLabel.Size = UDim2.new(1, -80, 1, 0)
-    TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+    TitleLabel.Position = UDim2.new(0, 15, 0, 0)
     TitleLabel.Text = WindowName
     TitleLabel.TextColor3 = Theme.Accent
     TitleLabel.Font = Enum.Font.GothamBold
@@ -232,22 +211,15 @@ function Library:CreateWindow(cfg)
     CloseBtn.TextColor3 = Theme.Text
     Instance.new("UICorner", CloseBtn)
     
-    CloseBtn.MouseButton1Click:Connect(function()
-        Main.Visible = false
-        OpenFrame.Visible = true
-    end)
-    OpenBtn.MouseButton1Click:Connect(function()
-        Main.Visible = true
-        OpenFrame.Visible = false
-    end)
+    CloseBtn.MouseButton1Click:Connect(function() Main.Visible = false OpenFrame.Visible = true end)
+    OpenBtn.MouseButton1Click:Connect(function() Main.Visible = true OpenFrame.Visible = false end)
 
-    -- Status Bar
+    -- [STAT BAR]
     local StatBar = Instance.new("Frame", Main)
     StatBar.Size = UDim2.new(1, -20, 0, 25)
     StatBar.Position = UDim2.new(0, 10, 1, -35)
     StatBar.BackgroundColor3 = Theme.TopBar
     Instance.new("UICorner", StatBar).CornerRadius = UDim.new(0, 6)
-    
     local StatText = Instance.new("TextLabel", StatBar)
     StatText.Size = UDim2.new(1, -10, 1, 0)
     StatText.Position = UDim2.new(0, 10, 0, 0)
@@ -274,9 +246,7 @@ function Library:CreateWindow(cfg)
     local TabLayout = Instance.new("UIListLayout", TabBar)
     TabLayout.FillDirection = Enum.FillDirection.Horizontal
     TabLayout.Padding = UDim.new(0, 8)
-    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabBar.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 0, 0)
-    end)
+    TabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() TabBar.CanvasSize = UDim2.new(0, TabLayout.AbsoluteContentSize.X, 0, 0) end)
 
     local ContainerHolder = Instance.new("Frame", Main)
     ContainerHolder.Position = UDim2.new(0, 10, 0, 90)
@@ -303,9 +273,7 @@ function Library:CreateWindow(cfg)
         Container.ScrollBarThickness = 2
         local ContentLayout = Instance.new("UIListLayout", Container)
         ContentLayout.Padding = UDim.new(0, 8)
-        ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            Container.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 10)
-        end)
+        ContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() Container.CanvasSize = UDim2.new(0, 0, 0, ContentLayout.AbsoluteContentSize.Y + 10) end)
 
         if FirstTab then TabBtn.TextColor3 = Theme.Accent end
         TabBtn.MouseButton1Click:Connect(function()
@@ -395,7 +363,6 @@ function Library:CreateWindow(cfg)
                 Option.TextColor3 = Theme.SecondaryText
                 Option.Font = Enum.Font.Gotham
                 Option.TextSize = 13
-                
                 Option.MouseButton1Click:Connect(function()
                     if multi then
                         if table.find(selected, v) then table.remove(selected, table.find(selected, v)) else table.insert(selected, v) end
@@ -409,11 +376,7 @@ function Library:CreateWindow(cfg)
                     end
                 end)
             end
-
-            MainBtn.MouseButton1Click:Connect(function()
-                open = not open
-                DropFrame.Size = UDim2.new(0.96, 0, 0, open and (38 + (#list * 32)) or 38)
-            end)
+            MainBtn.MouseButton1Click:Connect(function() open = not open DropFrame.Size = UDim2.new(0.96, 0, 0, open and (38 + (#list * 32)) or 38) end)
         end
 
         function Elements:CreateSlider(text, min, max, default, callback)
@@ -446,9 +409,9 @@ function Library:CreateWindow(cfg)
                 callback(val)
             end
             local dragging_s = false
-            SliderFrame.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging_s = true; Update(i) end end)
-            UserInputService.InputChanged:Connect(function(i) if dragging_s and i.UserInputType == Enum.UserInputType.MouseMovement then Update(i) end end)
-            UserInputService.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dragging_s = false end end)
+            SliderFrame.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then dragging_s = true; Update(i) end end)
+            UserInputService.InputChanged:Connect(function(i) if dragging_s and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then Update(i) end end)
+            UserInputService.InputEnded:Connect(function() dragging_s = false end)
         end
 
         function Elements:CreateInput(text, placeholder, callback)
