@@ -1,8 +1,8 @@
 --[[
-    TR-VOID UI LIBRARY (FIXED VERSION)
+    TR-VOID UI LIBRARY (TOP-ALIGN VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.5
-    Fix: Open Button Position & Mobile Optimization
+    Version: 1.6
+    Fix: Extreme Top Open Button & Smart Toggle
 ]]
 
 local Library = {}
@@ -18,12 +18,12 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - EKRANIN EN ÜSTÜNE SABİTLENDİ]
+    -- [OPEN BUTTON - EKRANIN EN TEPESİ]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -40) -- Başlangıçta ekranın dışında (yukarıda)
+    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -100) -- İki katı yukarıda gizli
     OpenButtonFrame.Size = UDim2.new(0, 80, 0, 30)
     OpenButtonFrame.BorderSizePixel = 0
     OpenButtonFrame.Visible = false
@@ -44,7 +44,7 @@ function Library:CreateWindow(cfg)
     OpenText.Font = Enum.Font.GothamBold
     OpenText.Text = "OPEN"
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    OpenText.TextSize = 12
+    OpenText.TextSize = 11
 
     -- [MAIN FRAME]
     local Main = Instance.new("Frame")
@@ -102,7 +102,6 @@ function Library:CreateWindow(cfg)
     Container.Position = UDim2.new(0, 5, 0, 40)
     Container.Size = UDim2.new(1, -10, 1, -45)
     Container.ScrollBarThickness = 2
-    Container.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
     Container.CanvasSize = UDim2.new(0, 0, 0, 0)
 
     local Layout = Instance.new("UIListLayout")
@@ -117,7 +116,7 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA MANTIĞI: Open butonu yukarıdan sadece çok az görünür (En üst)
+    -- KAPATMA: Butonu tam 0 noktasına (en üst çizgiye) indirir
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
@@ -126,9 +125,9 @@ function Library:CreateWindow(cfg)
         end)
     end)
 
-    -- AÇMA MANTIĞI: Open butonu tekrar yukarı saklanır
+    -- AÇMA: Butonu çok yukarıya (-100) fırlatır
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -40), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -100), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
@@ -169,11 +168,9 @@ function Library:CreateWindow(cfg)
         Button.TextSize = 13
         Button.TextXAlignment = Enum.TextXAlignment.Left
         Button.AutoButtonColor = false
-
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0, 6)
         Corner.Parent = Button
-
         Button.MouseButton1Click:Connect(function()
             callback()
             Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -185,28 +182,24 @@ function Library:CreateWindow(cfg)
     function Elements:CreateToggle(name, callback)
         local state = "neutral"
         local callback = callback or function() end
-
         local ToggleBtn = Instance.new("TextButton")
         ToggleBtn.Parent = Container
         ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         ToggleBtn.Size = UDim2.new(1, -10, 0, 35)
         ToggleBtn.Text = ""
         ToggleBtn.AutoButtonColor = false
-
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0, 6)
         Corner.Parent = ToggleBtn
-
-        local Title = Instance.new("TextLabel")
-        Title.Parent = ToggleBtn
-        Title.Text = "  " .. name
-        Title.Font = Enum.Font.Gotham
-        Title.TextColor3 = Color3.fromRGB(220, 220, 220)
-        Title.TextSize = 13
-        Title.TextXAlignment = Enum.TextXAlignment.Left
-        Title.Size = UDim2.new(1, 0, 1, 0)
-        Title.BackgroundTransparency = 1
-
+        local TTitle = Instance.new("TextLabel")
+        TTitle.Parent = ToggleBtn
+        TTitle.Text = "  " .. name
+        TTitle.Font = Enum.Font.Gotham
+        TTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
+        TTitle.TextSize = 13
+        TTitle.TextXAlignment = Enum.TextXAlignment.Left
+        TTitle.Size = UDim2.new(1, 0, 1, 0)
+        TTitle.BackgroundTransparency = 1
         local Switch = Instance.new("Frame")
         Switch.Parent = ToggleBtn
         Switch.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -215,7 +208,6 @@ function Library:CreateWindow(cfg)
         local SCorner = Instance.new("UICorner")
         SCorner.CornerRadius = UDim.new(1, 0)
         SCorner.Parent = Switch
-
         local Dot = Instance.new("Frame")
         Dot.Parent = Switch
         Dot.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
@@ -224,7 +216,6 @@ function Library:CreateWindow(cfg)
         local DCorner = Instance.new("UICorner")
         DCorner.CornerRadius = UDim.new(1, 0)
         DCorner.Parent = Dot
-
         ToggleBtn.MouseButton1Click:Connect(function()
             if state == "neutral" or state == "off" then
                 state = "on"
