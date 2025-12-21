@@ -81,7 +81,6 @@ function Library:InitKeySystem(cfg)
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
     
     local BgImg = Instance.new("ImageLabel", KeyFrame)
-    BgImg.Name = "Background"
     BgImg.ZIndex = 0
     BgImg.Size = UDim2.new(1, 0, 1, 0)
     BgImg.Image = AssetID
@@ -174,21 +173,21 @@ function Library:CreateWindow(cfg)
     local MainStroke = Instance.new("UIStroke", Main)
     MainStroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- [AÇMA BUTONU]
+    -- [AÇMA BUTONU - OPEN]
     local OpenBtn = Instance.new("TextButton", ScreenGui)
     OpenBtn.Name = "OpenButton"
     OpenBtn.Visible = false
-    OpenBtn.Position = UDim2.new(0, 10, 0, 45) -- Roblox ikonunun hemen altı
-    OpenBtn.Size = UDim2.new(0, 40, 0, 40)
+    OpenBtn.Position = UDim2.new(0, 10, 0, 35) -- Roblox ikonunun hemen altı (10 birim yukarı alındı)
+    OpenBtn.Size = UDim2.new(0, 65, 0, 30) -- Yazı tam sığsın diye genişlik ayarlandı
     OpenBtn.BackgroundColor3 = Theme.Main
-    OpenBtn.Text = "V"
+    OpenBtn.Text = "OPEN"
     OpenBtn.TextColor3 = Theme.Accent
     OpenBtn.Font = Enum.Font.GothamBold
-    OpenBtn.TextSize = 20
-    Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 8)
+    OpenBtn.TextSize = 14
+    Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 6)
     local OpenStroke = Instance.new("UIStroke", OpenBtn)
     OpenStroke.Color = Theme.Accent
-    OpenStroke.Thickness = 2
+    OpenStroke.Thickness = 1.5
 
     OpenBtn.MouseButton1Click:Connect(function()
         Main.Visible = true
@@ -229,7 +228,7 @@ function Library:CreateWindow(cfg)
         end
     end)
 
-    -- Draggable
+    -- Draggable (Sürükleme)
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -259,7 +258,7 @@ function Library:CreateWindow(cfg)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- [KAPATMA BUTONU]
+    -- [KAPATMA BUTONU - X]
     local CloseBtn = Instance.new("TextButton", TopBar)
     CloseBtn.Size = UDim2.new(0, 30, 0, 30)
     CloseBtn.Position = UDim2.new(1, -35, 0.5, -15)
@@ -275,6 +274,7 @@ function Library:CreateWindow(cfg)
         OpenBtn.Visible = true
     end)
 
+    -- Tablar ve İçerik
     local TabBar = Instance.new("ScrollingFrame", Main)
     TabBar.Position = UDim2.new(0, 10, 0, 45)
     TabBar.Size = UDim2.new(1, -20, 0, 40)
