@@ -1,8 +1,9 @@
+
 --[[
-    TR-VOID UI LIBRARY (TOP-ALIGN VERSION)
+    TR-VOID UI LIBRARY (EXTREME TOP VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.6
-    Fix: Extreme Top Open Button & Smart Toggle
+    Version: 1.7
+    Fix: Triple Top Open Button & Smart Toggle Logic
 ]]
 
 local Library = {}
@@ -18,12 +19,12 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - EKRANIN EN TEPESİ]
+    -- [OPEN BUTTON - 3 KATI YUKARI ÇIKARTILDI]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -100) -- İki katı yukarıda gizli
+    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -300) -- Başlangıçta 3 katı yukarıda gizli
     OpenButtonFrame.Size = UDim2.new(0, 80, 0, 30)
     OpenButtonFrame.BorderSizePixel = 0
     OpenButtonFrame.Visible = false
@@ -116,18 +117,19 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA: Butonu tam 0 noktasına (en üst çizgiye) indirir
+    -- KAPATMA: Butonu en yukarıya, ekranın tam tepesine sıfırlar
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
+            -- Pozisyonu 0 yaparak ekranın tam tavanına oturttum
             OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, 0), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA: Butonu çok yukarıya (-100) fırlatır
+    -- AÇMA: Butonu 3 katı yukarıya (-300) fırlatır
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -100), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -300), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
@@ -165,7 +167,6 @@ function Library:CreateWindow(cfg)
         Button.Font = Enum.Font.Gotham
         Button.Text = "  " .. name
         Button.TextColor3 = Color3.fromRGB(220, 220, 220)
-        Button.TextSize = 13
         Button.TextXAlignment = Enum.TextXAlignment.Left
         Button.AutoButtonColor = false
         local Corner = Instance.new("UICorner")
@@ -191,15 +192,14 @@ function Library:CreateWindow(cfg)
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0, 6)
         Corner.Parent = ToggleBtn
-        local TTitle = Instance.new("TextLabel")
-        TTitle.Parent = ToggleBtn
-        TTitle.Text = "  " .. name
-        TTitle.Font = Enum.Font.Gotham
-        TTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
-        TTitle.TextSize = 13
-        TTitle.TextXAlignment = Enum.TextXAlignment.Left
-        TTitle.Size = UDim2.new(1, 0, 1, 0)
-        TTitle.BackgroundTransparency = 1
+        local Title = Instance.new("TextLabel")
+        Title.Parent = ToggleBtn
+        Title.Text = "  " .. name
+        Title.Font = Enum.Font.Gotham
+        Title.TextColor3 = Color3.fromRGB(220, 220, 220)
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+        Title.Size = UDim2.new(1, 0, 1, 0)
+        Title.BackgroundTransparency = 1
         local Switch = Instance.new("Frame")
         Switch.Parent = ToggleBtn
         Switch.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -235,4 +235,3 @@ function Library:CreateWindow(cfg)
 end
 
 return Library
-
