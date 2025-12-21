@@ -1,10 +1,3 @@
---[[
-    TR-VOID UI LIBRARY (v3.7)
-    Developer: Hasan (hasancoder54)
-    Device: Redmi Note 8 Pro Optimized
-    Full 300+ Lines Version
-]]
-
 local Library = {}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -490,3 +483,4 @@ end
 
 -- BURASI ÇOK ÖNEMLİ! BU SATIR OLMAZSA NİL HATASI ALIRSIN:
 return Library
+
