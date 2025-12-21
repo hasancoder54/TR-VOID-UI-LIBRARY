@@ -1,8 +1,8 @@
 --[[
-    TR-VOID UI LIBRARY (TOP-LEFT EXTREME)
+    TR-VOID UI LIBRARY (ULTRA FINAL VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.9
-    Update: Open Button moved to Absolute Top-Left (Square & Compact)
+    Version: 2.0
+    Update: Absolute Top-Left Square Button & Smart Toggle Fixed
 ]]
 
 local Library = {}
@@ -18,17 +18,17 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - SOL ÜST EN TEPEDE]
+    -- [OPEN BUTTON - SOL ÜST EN TEPEDE KARE]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -100) -- Başlangıçta çok yukarıda gizli
-    OpenButtonFrame.Size = UDim2.new(0, 40, 0, 40) -- Tam kare ve kompakt
+    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -250) -- Gizliyken çok yukarıda
+    OpenButtonFrame.Size = UDim2.new(0, 40, 0, 40) -- Kare form
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
-    OpenCorner.CornerRadius = UDim.new(0, 8)
+    OpenCorner.CornerRadius = UDim.new(0, 10) -- Yumuşak köşeler
     OpenCorner.Parent = OpenButtonFrame
 
     local OpenStroke = Instance.new("UIStroke")
@@ -41,9 +41,9 @@ function Library:CreateWindow(cfg)
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "V" -- Kare olduğu için tek harf veya kısa ikon daha şık durur
+    OpenText.Text = "V"
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    OpenText.TextSize = 14
+    OpenText.TextSize = 16
 
     -- [MAIN FRAME]
     local Main = Instance.new("Frame")
@@ -115,18 +115,18 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA: Butonu sol üstün en tavanına (Y: 5) getirir
+    -- KAPATMA: Butonu sol üstün tavanına (-12) çeker
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 5), "Out", "Back", 0.5, true)
+            OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -12), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA: Butonu tekrar çok yukarı saklar
+    -- AÇMA: Butonu 250 birim yukarı saklar
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -100), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -250), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
