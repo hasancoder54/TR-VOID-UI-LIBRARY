@@ -1,8 +1,8 @@
 --[[
     TR-VOID UI LIBRARY
     Developer: Hasan (hasancoder54)
-    Version: 2.1
-    Update: Open Button position fixed (2 clicks down) & Text set to "OPEN"
+    Version: 2.2
+    Fix: Text is forced to "OPEN", Position is 2 clicks below top-left.
 ]]
 
 local Library = {}
@@ -18,13 +18,13 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON - SOL ÜST, 2 TIK AŞAĞIDA]
+    -- [OPEN BUTTON]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -250) -- Gizliyken yukarıda
-    OpenButtonFrame.Size = UDim2.new(0, 50, 0, 40) -- OPEN yazısı için biraz genişletildi
+    OpenButtonFrame.Position = UDim2.new(0, 15, 0, -250)
+    OpenButtonFrame.Size = UDim2.new(0, 60, 0, 40) -- OPEN yazısı sığsın diye genişlik 60 yapıldı
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
@@ -41,7 +41,7 @@ function Library:CreateWindow(cfg)
     OpenText.BackgroundTransparency = 1
     OpenText.Size = UDim2.new(1, 0, 1, 0)
     OpenText.Font = Enum.Font.GothamBold
-    OpenText.Text = "OPEN" -- Yazı tekrar OPEN yapıldı
+    OpenText.Text = "OPEN" -- KESİN OLARAK OPEN
     OpenText.TextColor3 = Color3.fromRGB(255, 255, 255)
     OpenText.TextSize = 12
 
@@ -115,17 +115,17 @@ function Library:CreateWindow(cfg)
     -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- KAPATMA: Butonu sol üstün 2 tık aşağısına (Y: 10) çeker
+    -- KAPATMA
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            -- Y değerini 10 yaparak 2 tık aşağı aldım
+            -- Pozisyon 2 tık aşağı (Y: 10)
             OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, 10), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- AÇMA: Butonu geri saklar
+    -- AÇMA
     OpenText.MouseButton1Click:Connect(function()
         OpenButtonFrame:TweenPosition(UDim2.new(0, 15, 0, -250), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
