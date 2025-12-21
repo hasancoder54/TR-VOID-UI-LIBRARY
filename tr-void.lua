@@ -1,8 +1,8 @@
 --[[
-    TR-VOID UI LIBRARY (ULTRA PRO)
+    TR-VOID UI LIBRARY (FIXED VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.4
-    Features: Smart Toggle (Red/Green), Minimize System, Auto-Layout, Fix Conflict
+    Version: 1.5
+    Fix: Open Button Position & Mobile Optimization
 ]]
 
 local Library = {}
@@ -18,18 +18,24 @@ function Library:CreateWindow(cfg)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- [OPEN BUTTON]
+    -- [OPEN BUTTON - EKRANIN EN ÜSTÜNE SABİTLENDİ]
     local OpenButtonFrame = Instance.new("Frame")
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -50)
+    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -40) -- Başlangıçta ekranın dışında (yukarıda)
     OpenButtonFrame.Size = UDim2.new(0, 80, 0, 30)
+    OpenButtonFrame.BorderSizePixel = 0
     OpenButtonFrame.Visible = false
 
     local OpenCorner = Instance.new("UICorner")
     OpenCorner.CornerRadius = UDim.new(0, 8)
     OpenCorner.Parent = OpenButtonFrame
+
+    local OpenStroke = Instance.new("UIStroke")
+    OpenStroke.Color = Color3.fromRGB(255, 255, 255)
+    OpenStroke.Transparency = 0.7
+    OpenStroke.Parent = OpenButtonFrame
 
     local OpenText = Instance.new("TextButton")
     OpenText.Parent = OpenButtonFrame
@@ -52,6 +58,11 @@ function Library:CreateWindow(cfg)
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 8)
     MainCorner.Parent = Main
+
+    local MainStroke = Instance.new("UIStroke")
+    MainStroke.Color = Color3.fromRGB(40, 40, 40)
+    MainStroke.Thickness = 1.5
+    MainStroke.Parent = Main
 
     -- [TOP BAR]
     local TopBar = Instance.new("Frame")
@@ -78,7 +89,7 @@ function Library:CreateWindow(cfg)
     CloseButton.Text = "X"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     CloseButton.Font = Enum.Font.GothamBold
-    CloseButton.Parent = TopBar
+    CloseButton.TextSize = 14
 
     local CloseCorner = Instance.new("UICorner")
     CloseCorner.CornerRadius = UDim.new(0, 6)
@@ -91,6 +102,7 @@ function Library:CreateWindow(cfg)
     Container.Position = UDim2.new(0, 5, 0, 40)
     Container.Size = UDim2.new(1, -10, 1, -45)
     Container.ScrollBarThickness = 2
+    Container.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
     Container.CanvasSize = UDim2.new(0, 0, 0, 0)
 
     local Layout = Instance.new("UIListLayout")
@@ -102,26 +114,28 @@ function Library:CreateWindow(cfg)
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
     end)
 
-    -- [ANIMATIONS & DRAG]
+    -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
+    -- KAPATMA MANTIĞI: Open butonu yukarıdan sadece çok az görünür (En üst)
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
             OpenButtonFrame.Visible = true
-            OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, 20), "Out", "Back", 0.5, true)
+            OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, 0), "Out", "Back", 0.5, true)
         end)
     end)
 
+    -- AÇMA MANTIĞI: Open butonu tekrar yukarı saklanır
     OpenText.MouseButton1Click:Connect(function()
-        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -50), "In", "Quart", 0.3, true, function()
+        OpenButtonFrame:TweenPosition(UDim2.new(0.5, -40, 0, -40), "In", "Quart", 0.3, true, function()
             OpenButtonFrame.Visible = false
             Main.Visible = true
             Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Back", 0.5, true)
         end)
     end)
 
-    -- Basic Dragging
+    -- [DRAGGING]
     local dragging, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -142,7 +156,6 @@ function Library:CreateWindow(cfg)
         end
     end)
 
-    -- [ELEMENTS]
     local Elements = {}
 
     function Elements:CreateButton(name, callback)
@@ -170,7 +183,7 @@ function Library:CreateWindow(cfg)
     end
 
     function Elements:CreateToggle(name, callback)
-        local state = "neutral" -- neutral, on, off
+        local state = "neutral"
         local callback = callback or function() end
 
         local ToggleBtn = Instance.new("TextButton")
@@ -194,24 +207,20 @@ function Library:CreateWindow(cfg)
         Title.Size = UDim2.new(1, 0, 1, 0)
         Title.BackgroundTransparency = 1
 
-        -- Switch Background (The Border)
         local Switch = Instance.new("Frame")
         Switch.Parent = ToggleBtn
         Switch.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         Switch.Position = UDim2.new(1, -45, 0.5, -10)
         Switch.Size = UDim2.new(0, 35, 0, 20)
-        
         local SCorner = Instance.new("UICorner")
         SCorner.CornerRadius = UDim.new(1, 0)
         SCorner.Parent = Switch
 
-        -- The Circle (Dot)
         local Dot = Instance.new("Frame")
         Dot.Parent = Switch
-        Dot.BackgroundColor3 = Color3.fromRGB(180, 180, 180) -- Initial Gray
+        Dot.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
         Dot.Size = UDim2.new(0, 14, 0, 14)
-        Dot.Position = UDim2.new(0.5, -7, 0.5, -7) -- Initial Center
-
+        Dot.Position = UDim2.new(0.5, -7, 0.5, -7)
         local DCorner = Instance.new("UICorner")
         DCorner.CornerRadius = UDim.new(1, 0)
         DCorner.Parent = Dot
@@ -235,3 +244,4 @@ function Library:CreateWindow(cfg)
 end
 
 return Library
+
