@@ -5,7 +5,7 @@ local CoreGui = game:GetService("CoreGui")
 local TextService = game:GetService("TextService")
 local RunService = game:GetService("RunService")
 
--- Renk Paleti
+-- [ RENK TEMASI ]
 local Theme = {
     Main = Color3.fromRGB(15, 15, 18),
     TopBar = Color3.fromRGB(22, 22, 26),
@@ -17,7 +17,7 @@ local Theme = {
     Error = Color3.fromRGB(255, 60, 60)
 }
 
--- [1. BİLDİRİM SİSTEMİ]
+-- [ BİLDİRİM SİSTEMİ ]
 function Library:Notify(title, text, duration)
     local NotifyGui = CoreGui:FindFirstChild("TR_VOID_NOTIFY") or Instance.new("ScreenGui", CoreGui)
     NotifyGui.Name = "TR_VOID_NOTIFY"
@@ -53,7 +53,6 @@ function Library:Notify(title, text, duration)
     ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
 
     Notif:TweenPosition(UDim2.new(1, -250, 1, -100), "Out", "Quart", 0.5, true)
-    
     task.delay(duration or 3, function()
         Notif:TweenPosition(UDim2.new(1, 20, 1, -100), "In", "Quart", 0.5, true)
         task.wait(0.5)
@@ -61,11 +60,11 @@ function Library:Notify(title, text, duration)
     end)
 end
 
--- [2. KEY SİSTEMİ]
+-- [ KEY SİSTEMİ - RESİM HATASI DÜZELTİLDİ ]
 function Library:InitKeySystem(cfg)
     local CorrectKey = cfg.Key or "key"
     local KeyLink = cfg.Link or "link"
-    local CustomBg = cfg.CustomBackground -- Image ID veya nil/false
+    local CustomBg = cfg.CustomBackground
     local Callback = cfg.Callback
 
     local KeyGui = Instance.new("ScreenGui", CoreGui)
@@ -84,19 +83,24 @@ function Library:InitKeySystem(cfg)
     KeyFrame.BackgroundColor3 = Theme.Main
     KeyFrame.ClipsDescendants = true
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
-    local MainStroke = Instance.new("UIStroke", KeyFrame)
-    MainStroke.Color = Color3.fromRGB(45, 45, 50)
+    Instance.new("UIStroke", KeyFrame).Color = Color3.fromRGB(45, 45, 50)
 
-    -- Arka Plan Ayarı
-    if CustomBg then
+    -- Resim Kontrolü
+    if CustomBg and CustomBg ~= false then
         local BgImage = Instance.new("ImageLabel", KeyFrame)
+        BgImage.Name = "Background"
         BgImage.Size = UDim2.new(1, 0, 1, 0)
-        BgImage.Image = "rbxassetid://" .. tostring(CustomBg)
-        BgImage.ImageTransparency = 0.8
         BgImage.BackgroundTransparency = 1
         BgImage.ZIndex = 0
+        -- ID Kontrolü ve Atama
+        local imgId = tostring(CustomBg)
+        if not imgId:find("rbxassetid://") then
+            imgId = "rbxassetid://" .. imgId
+        end
+        BgImage.Image = imgId
+        BgImage.ImageTransparency = 0.7 -- Hafif görünmesi için
     else
-        -- Gri Çizgi Animasyonu (Scanning Effect)
+        -- Gri Çizgi Animasyonu
         local Line = Instance.new("Frame", KeyFrame)
         Line.Size = UDim2.new(0, 2, 1, 0)
         Line.Position = UDim2.new(-0.1, 0, 0, 0)
@@ -114,7 +118,7 @@ function Library:InitKeySystem(cfg)
                 RunAnim()
             end)
         end
-        RunAnim()
+        task.spawn(RunAnim)
     end
 
     local Title = Instance.new("TextLabel", KeyFrame)
@@ -176,7 +180,7 @@ function Library:InitKeySystem(cfg)
     end)
 end
 
--- [3. ANA PENCERE]
+-- [ ANA PENCERE ]
 function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 480
@@ -194,7 +198,7 @@ function Library:CreateWindow(cfg)
     local MainStroke = Instance.new("UIStroke", Main)
     MainStroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- Dragging
+    -- Sürükleme
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
