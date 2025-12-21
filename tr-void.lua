@@ -1,67 +1,104 @@
+--[[
+    TR-VOID UI LIBRARY
+    Developer: Hasan (hasancoder54)
+    Supported: Delta, Vega X, Fluxus (Android/PC)
+]]
+
+local Library = {}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
-local Library = {}
-
-function Library:CreateWindow(config)
-    local Name = config.Name or "Hasan Library"
+function Library:CreateWindow(cfg)
+    local WindowName = cfg.Name or "TR-VOID"
     
-    -- Ana Ekran (ScreenGui)
+    -- Main ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "DeltaGui_" .. math.random(1, 1000)
-    ScreenGui.Parent = game:GetService("CoreGui") -- Delta'da görünmesi için
+    ScreenGui.Name = "TR_VOID_UI"
+    ScreenGui.Parent = CoreGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    -- Ana Çerçeve (Main Frame)
-    local MainFrame = Instance.new("Frame")
-    MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(0, 0, 0, 0) -- Başlangıçta 0 (Animasyon için)
-    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    MainFrame.BorderSizePixel = 0
-    MainFrame.ClipsDescendants = true
-    MainFrame.Parent = ScreenGui
+    -- Main Frame
+    local Main = Instance.new("Frame")
+    Main.Name = "Main"
+    Main.Parent = ScreenGui
+    Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    Main.BorderSizePixel = 0
+    Main.Position = UDim2.new(0.5, -200, 0.5, -150)
+    Main.Size = UDim2.new(0, 0, 0, 0) -- Opening Animation Start
+    Main.ClipsDescendants = true
 
-    -- Köşeleri Yuvarlatma
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 10)
-    UICorner.Parent = MainFrame
+    local MainCorner = Instance.new("UICorner")
+    MainCorner.CornerRadius = UDim.new(0, 8)
+    MainCorner.Parent = Main
 
-    -- Başlık Paneli
-    local TitleBar = Instance.new("Frame")
-    TitleBar.Size = UDim2.new(1, 0, 0, 40)
-    TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    TitleBar.BorderSizePixel = 0
-    TitleBar.Parent = MainFrame
+    local MainStroke = Instance.new("UIStroke")
+    MainStroke.Color = Color3.fromRGB(40, 40, 40)
+    MainStroke.Thickness = 1.5
+    MainStroke.Parent = Main
 
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Text = Name
-    TitleLabel.Size = UDim2.new(1, -20, 1, 0)
-    TitleLabel.Position = UDim2.new(0, 15, 0, 0)
-    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    TitleLabel.BackgroundTransparency = 1
-    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.Font = Enum.Font.GothamBold
-    TitleLabel.TextSize = 18
-    TitleLabel.Parent = TitleBar
+    -- Top Bar
+    local TopBar = Instance.new("Frame")
+    TopBar.Name = "TopBar"
+    TopBar.Parent = Main
+    TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    TopBar.Size = UDim2.new(1, 0, 0, 35)
+    TopBar.BorderSizePixel = 0
 
-    -- Açılış Animasyonu
-    MainFrame:TweenSize(UDim2.new(0, 400, 0, 250), "Out", "Back", 0.5, true)
+    local TopCorner = Instance.new("UICorner")
+    TopCorner.CornerRadius = UDim.new(0, 8)
+    TopCorner.Parent = TopBar
 
-    -- Sürükleme Özelliği (Drag)
+    local Title = Instance.new("TextLabel")
+    Title.Parent = TopBar
+    Title.Text = WindowName
+    Title.Font = Enum.Font.GothamBold
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 14
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Position = UDim2.new(0, 15, 0, 0)
+    Title.Size = UDim2.new(1, -15, 1, 0)
+    Title.BackgroundTransparency = 1
+
+    -- Container (Scrolling Area)
+    local Container = Instance.new("ScrollingFrame")
+    Container.Name = "Container"
+    Container.Parent = Main
+    Container.BackgroundTransparency = 1
+    Container.Position = UDim2.new(0, 5, 0, 40)
+    Container.Size = UDim2.new(1, -10, 1, -45)
+    Container.ScrollBarThickness = 2
+    Container.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
+    Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+    local Layout = Instance.new("UIListLayout")
+    Layout.Parent = Container
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+    Layout.Padding = UDim.new(0, 5)
+
+    -- Auto Canvas Size
+    Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
+    end)
+
+    -- Opening Animation
+    Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
+
+    -- Dragging Logic
     local dragging, dragInput, dragStart, startPos
-    TitleBar.InputBegan:Connect(function(input)
+    TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
-            startPos = MainFrame.Position
+            startPos = Main.Position
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
-            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 
@@ -71,33 +108,37 @@ function Library:CreateWindow(config)
         end
     end)
 
-    -- Buton Oluşturma Fonksiyonu
+    -- Elements Functions
     local Elements = {}
-    function Elements:CreateButton(btnConfig)
-        local btnName = btnConfig.Name or "Buton"
-        local callback = btnConfig.Callback or function() end
 
+    function Elements:CreateButton(name, callback)
+        local callback = callback or function() end
+        
         local Button = Instance.new("TextButton")
-        Button.Size = UDim2.new(0.9, 0, 0, 35)
-        Button.Position = UDim2.new(0.05, 0, 0, 50) -- Şimdilik statik, liste yapısı eklenecek
-        Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-        Button.Text = btnName
-        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Button.Font = Enum.Font.Gotham
-        Button.TextSize = 14
+        Button.Name = name .. "_Btn"
+        Button.Parent = Container
+        Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Button.Size = UDim2.new(1, -10, 0, 35)
         Button.AutoButtonColor = false
-        Button.Parent = MainFrame
+        Button.Font = Enum.Font.Gotham
+        Button.Text = name
+        Button.TextColor3 = Color3.fromRGB(200, 200, 200)
+        Button.TextSize = 13
 
         local BtnCorner = Instance.new("UICorner")
         BtnCorner.CornerRadius = UDim.new(0, 6)
         BtnCorner.Parent = Button
 
-        -- Buton Efekti (Hover/Click)
+        local BtnStroke = Instance.new("UIStroke")
+        BtnStroke.Color = Color3.fromRGB(45, 45, 45)
+        BtnStroke.Thickness = 1
+        BtnStroke.Parent = Button
+
+        -- Click Animation
         Button.MouseButton1Click:Connect(function()
-            Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            wait(0.1)
-            Button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             callback()
+            Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            TweenService:Create(Button, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
         end)
     end
 
