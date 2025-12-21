@@ -32,7 +32,7 @@ function Library:Notify(title, text, duration)
     Notif.Name = "Notification"
     Notif.Parent = NotifyGui
     Notif.Size = UDim2.new(0, 240, 0, 65)
-    Notif.Position = UDim2.new(1, 20, 1, -100) -- Ekran dışı sağ
+    Notif.Position = UDim2.new(1, 20, 1, -100)
     Notif.BackgroundColor3 = Theme.Main
     
     local Corner = Instance.new("UICorner", Notif)
@@ -64,11 +64,9 @@ function Library:Notify(title, text, duration)
     ContentLabel.TextWrapped = true
     ContentLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Animasyon: İçeri Gir
     Notif:TweenPosition(UDim2.new(1, -250, 1, -100), "Out", "Quart", 0.5, true)
     
     task.delay(duration or 3, function()
-        -- Animasyon: Dışarı Çık
         Notif:TweenPosition(UDim2.new(1, 20, 1, -100), "In", "Quart", 0.5, true)
         task.wait(0.5)
         Notif:Destroy()
@@ -172,7 +170,6 @@ function Library:CreateWindow(cfg)
     local ScreenGui = Instance.new("ScreenGui", CoreGui)
     ScreenGui.Name = "TR_VOID_UI"
 
-    -- Toggle/Open Button
     local OpenFrame = Instance.new("Frame", ScreenGui)
     OpenFrame.Size = UDim2.new(0, 80, 0, 35)
     OpenFrame.Position = UDim2.new(0, 10, 0, 30)
@@ -189,7 +186,6 @@ function Library:CreateWindow(cfg)
     OpenBtn.Font = Enum.Font.GothamBold
     OpenBtn.TextSize = 14
 
-    -- Main Frame
     local Main = Instance.new("Frame", ScreenGui)
     Main.BackgroundColor3 = Theme.Main
     Main.Position = UDim2.new(0.5, -WindowWidth/2, 0.5, -WindowHeight/2)
@@ -198,7 +194,6 @@ function Library:CreateWindow(cfg)
     local MainStroke = Instance.new("UIStroke", Main)
     MainStroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- Sürükleme Mantığı
     local dragging, dragStart, startPos
     Main.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -213,7 +208,6 @@ function Library:CreateWindow(cfg)
     end)
     UserInputService.InputEnded:Connect(function() dragging = false end)
 
-    -- TopBar
     local TopBar = Instance.new("Frame", Main)
     TopBar.Size = UDim2.new(1, 0, 0, 40)
     TopBar.BackgroundColor3 = Theme.TopBar
@@ -245,7 +239,6 @@ function Library:CreateWindow(cfg)
         OpenFrame.Visible = false
     end)
 
-    -- [HORIZONTAL SCROLLING TAB BAR]
     local TabBar = Instance.new("ScrollingFrame", Main)
     TabBar.Position = UDim2.new(0, 10, 0, 45)
     TabBar.Size = UDim2.new(1, -20, 0, 40)
@@ -317,7 +310,6 @@ function Library:CreateWindow(cfg)
         FirstTab = false
         local Elements = {}
 
-        -- [ELEMENT: BUTTON]
         function Elements:CreateButton(text, callback)
             local Button = Instance.new("TextButton", Container)
             Button.BackgroundColor3 = Theme.Element
@@ -331,7 +323,6 @@ function Library:CreateWindow(cfg)
             Button.MouseButton1Click:Connect(callback)
         end
 
-        -- [ELEMENT: TOGGLE]
         function Elements:CreateToggle(text, callback)
             local state = false
             local ToggleBtn = Instance.new("TextButton", Container)
@@ -364,7 +355,6 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [ELEMENT: SLIDER]
         function Elements:CreateSlider(text, min, max, default, callback)
             local SliderFrame = Instance.new("Frame", Container)
             SliderFrame.BackgroundColor3 = Theme.Element
@@ -413,7 +403,6 @@ function Library:CreateWindow(cfg)
             UserInputService.InputEnded:Connect(function() sliding = false end)
         end
 
-        -- [ELEMENT: DROPDOWN]
         function Elements:CreateDropdown(text, list, callback)
             local open = false
             local DropFrame = Instance.new("Frame", Container)
@@ -462,7 +451,6 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- [ELEMENT: INPUT]
         function Elements:CreateInput(text, placeholder, callback)
             local InpFrame = Instance.new("Frame", Container)
             InpFrame.BackgroundColor3 = Theme.Element
@@ -500,4 +488,5 @@ function Library:CreateWindow(cfg)
     return Tabs
 end
 
+-- BURASI ÇOK ÖNEMLİ! BU SATIR OLMAZSA NİL HATASI ALIRSIN:
 return Library
