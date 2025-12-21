@@ -1,8 +1,8 @@
 --[[
-    TR-VOID UI LIBRARY (FULL VERSION)
+    TR-VOID UI LIBRARY (PRO VERSION)
     Developer: Hasan (hasancoder54)
-    Version: 1.2
-    Features: Minimize System, Smooth Animations, Auto-Layout, Mobile Support
+    Version: 1.3
+    Features: Minimize System, Smooth Animations, Auto-Layout, Buttons, Toggle
 ]]
 
 local Library = {}
@@ -25,7 +25,7 @@ function Library:CreateWindow(cfg)
     OpenButtonFrame.Parent = ScreenGui
     OpenButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     OpenButtonFrame.BackgroundTransparency = 0.4 
-    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -50) -- Hidden initially
+    OpenButtonFrame.Position = UDim2.new(0.5, -40, 0, -50)
     OpenButtonFrame.Size = UDim2.new(0, 80, 0, 30)
     OpenButtonFrame.BorderSizePixel = 0
     OpenButtonFrame.Visible = false
@@ -57,7 +57,7 @@ function Library:CreateWindow(cfg)
     Main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(0.5, -200, 0.5, -150)
-    Main.Size = UDim2.new(0, 0, 0, 0) -- Opening Animation
+    Main.Size = UDim2.new(0, 0, 0, 0)
     Main.ClipsDescendants = true
 
     local MainCorner = Instance.new("UICorner")
@@ -105,7 +105,7 @@ function Library:CreateWindow(cfg)
     CloseCorner.CornerRadius = UDim.new(0, 6)
     CloseCorner.Parent = CloseButton
 
-    -- [CONTAINER FOR ELEMENTS]
+    -- [CONTAINER]
     local Container = Instance.new("ScrollingFrame")
     Container.Name = "Container"
     Container.Parent = Main
@@ -121,15 +121,13 @@ function Library:CreateWindow(cfg)
     Layout.SortOrder = Enum.SortOrder.LayoutOrder
     Layout.Padding = UDim.new(0, 5)
 
-    -- Auto Canvas Size Logic
     Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         Container.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
     end)
 
-    -- [INITIAL OPENING ANIMATION]
+    -- [ANIMATIONS]
     Main:TweenSize(UDim2.new(0, 400, 0, 300), "Out", "Quart", 0.6, true)
 
-    -- [MINIMIZE / RESTORE LOGIC]
     CloseButton.MouseButton1Click:Connect(function()
         Main:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.4, true, function()
             Main.Visible = false
@@ -146,7 +144,7 @@ function Library:CreateWindow(cfg)
         end)
     end)
 
-    -- [DRAGGING SUPPORT]
+    -- [DRAGGING]
     local dragging, dragInput, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -169,12 +167,12 @@ function Library:CreateWindow(cfg)
         end
     end)
 
-    -- [UI ELEMENTS FUNCTIONS]
+    -- [ELEMENTS]
     local Elements = {}
 
+    -- Create Button
     function Elements:CreateButton(name, callback)
         local callback = callback or function() end
-        
         local Button = Instance.new("TextButton")
         Button.Name = name .. "_Btn"
         Button.Parent = Container
@@ -182,9 +180,10 @@ function Library:CreateWindow(cfg)
         Button.Size = UDim2.new(1, -10, 0, 35)
         Button.AutoButtonColor = false
         Button.Font = Enum.Font.Gotham
-        Button.Text = name
+        Button.Text = "  " .. name
         Button.TextColor3 = Color3.fromRGB(220, 220, 220)
         Button.TextSize = 13
+        Button.TextXAlignment = Enum.TextXAlignment.Left
 
         local BtnCorner = Instance.new("UICorner")
         BtnCorner.CornerRadius = UDim.new(0, 6)
@@ -195,12 +194,79 @@ function Library:CreateWindow(cfg)
         BtnStroke.Thickness = 1
         BtnStroke.Parent = Button
 
-        -- Click Animation
         Button.MouseButton1Click:Connect(function()
             Button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
             callback()
             wait(0.1)
             TweenService:Create(Button, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}):Play()
+        end)
+    end
+
+    -- Create Toggle
+    function Elements:CreateToggle(name, default, callback)
+        local Toggled = default or false
+        local callback = callback or function() end
+
+        local ToggleFrame = Instance.new("TextButton")
+        ToggleFrame.Name = name .. "_Toggle"
+        ToggleFrame.Parent = Container
+        ToggleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        ToggleFrame.Size = UDim2.new(1, -10, 0, 35)
+        ToggleFrame.AutoButtonColor = false
+        ToggleFrame.Text = ""
+
+        local TCorner = Instance.new("UICorner")
+        TCorner.CornerRadius = UDim.new(0, 6)
+        TCorner.Parent = ToggleFrame
+
+        local TStroke = Instance.new("UIStroke")
+        TStroke.Color = Color3.fromRGB(50, 50, 50)
+        TStroke.Parent = ToggleFrame
+
+        local TTitle = Instance.new("TextLabel")
+        TTitle.Parent = ToggleFrame
+        TTitle.Text = "  " .. name
+        TTitle.Font = Enum.Font.Gotham
+        TTitle.TextColor3 = Color3.fromRGB(220, 220, 220)
+        TTitle.TextSize = 13
+        TTitle.TextXAlignment = Enum.TextXAlignment.Left
+        TTitle.Size = UDim2.new(1, 0, 1, 0)
+        TTitle.BackgroundTransparency = 1
+
+        -- Toggle Switch (The Circle part)
+        local SwitchBg = Instance.new("Frame")
+        SwitchBg.Name = "SwitchBg"
+        SwitchBg.Parent = ToggleFrame
+        SwitchBg.BackgroundColor3 = Toggled and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(60, 60, 60)
+        SwitchBg.Position = UDim2.new(1, -45, 0.5, -10)
+        SwitchBg.Size = UDim2.new(0, 35, 0, 20)
+        
+        local SCorner = Instance.new("UICorner")
+        SCorner.CornerRadius = UDim.new(1, 0)
+        SCorner.Parent = SwitchBg
+
+        local Dot = Instance.new("Frame")
+        Dot.Name = "Dot"
+        Dot.Parent = SwitchBg
+        Dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Dot.Size = UDim2.new(0, 16, 0, 16)
+        Dot.Position = Toggled and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
+
+        local DCorner = Instance.new("UICorner")
+        DCorner.CornerRadius = UDim.new(1, 0)
+        DCorner.Parent = Dot
+
+        ToggleFrame.MouseButton1Click:Connect(function()
+            Toggled = not Toggled
+            callback(Toggled)
+            
+            if Toggled then
+                TweenService:Create(SwitchBg, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(0, 200, 100)}):Play()
+                Dot:TweenPosition(UDim2.new(1, -18, 0.5, -8), "Out", "Quart", 0.3, true)
+            else
+                TweenService:Create(SwitchBg, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+                Dot:TweenPosition(UDim2.new(0, 2, 0.5, -8), "Out", "Quart", 0.3, true)
+            end
         end)
     end
 
