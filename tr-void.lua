@@ -70,6 +70,7 @@ end
 function Library:InitKeySystem(cfg)
     local CorrectKey = cfg.Key or "key"
     local KeyLink = cfg.Link or "link"
+    local CustomImage = cfg.Image or nil -- Yeni eklenen resim parametresi
     local Callback = cfg.Callback
 
     local KeyGui = Instance.new("ScreenGui", CoreGui)
@@ -81,9 +82,23 @@ function Library:InitKeySystem(cfg)
     KeyFrame.Size = UDim2.new(0, 350, 0, 220)
     KeyFrame.Position = UDim2.new(0.5, -175, 0.5, -110)
     KeyFrame.BackgroundColor3 = Theme.Main
+    KeyFrame.ClipsDescendants = true -- Resim taşmasın diye
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
     local Stroke = Instance.new("UIStroke", KeyFrame)
     Stroke.Color = Color3.fromRGB(45, 45, 50)
+
+    -- Arka Plan Resmi (Opsiyonel)
+    if CustomImage then
+        local BGImage = Instance.new("ImageLabel")
+        BGImage.Name = "Background"
+        BGImage.Parent = KeyFrame
+        BGImage.Size = UDim2.new(1, 0, 1, 0)
+        BGImage.BackgroundTransparency = 1
+        BGImage.Image = "rbxassetid://" .. CustomImage:gsub("rbxassetid://", "")
+        BGImage.ScaleType = Enum.ScaleType.Crop
+        BGImage.ImageTransparency = 0.6 -- Resmin üzerine yazıların okunması için biraz şeffaflık
+        BGImage.ZIndex = 0
+    end
 
     local Title = Instance.new("TextLabel")
     Title.Parent = KeyFrame
@@ -93,6 +108,7 @@ function Library:InitKeySystem(cfg)
     Title.TextColor3 = Theme.Text
     Title.Font = Enum.Font.GothamBold
     Title.TextSize = 20
+    Title.ZIndex = 1
 
     local KeyInput = Instance.new("TextBox")
     KeyInput.Parent = KeyFrame
@@ -104,6 +120,7 @@ function Library:InitKeySystem(cfg)
     KeyInput.TextColor3 = Theme.Text
     KeyInput.Font = Enum.Font.Gotham
     KeyInput.TextSize = 15
+    KeyInput.ZIndex = 1
     Instance.new("UICorner", KeyInput)
     local InpStroke = Instance.new("UIStroke", KeyInput)
     InpStroke.Color = Color3.fromRGB(50, 50, 55)
@@ -116,6 +133,7 @@ function Library:InitKeySystem(cfg)
     VerifyBtn.Text = "Verify Key"
     VerifyBtn.TextColor3 = Theme.Text
     VerifyBtn.Font = Enum.Font.GothamBold
+    VerifyBtn.ZIndex = 1
     Instance.new("UICorner", VerifyBtn)
 
     local GetBtn = Instance.new("TextButton")
@@ -126,6 +144,7 @@ function Library:InitKeySystem(cfg)
     GetBtn.Text = "Get Key"
     GetBtn.TextColor3 = Theme.Text
     GetBtn.Font = Enum.Font.GothamBold
+    GetBtn.ZIndex = 1
     Instance.new("UICorner", GetBtn)
 
     GetBtn.MouseButton1Click:Connect(function()
@@ -481,5 +500,4 @@ function Library:CreateWindow(cfg)
     return Tabs
 end
 
--- BURASI ÇOK ÖNEMLİ! BU SATIR OLMAZSA NİL HATASI ALIRSIN:
 return Library
