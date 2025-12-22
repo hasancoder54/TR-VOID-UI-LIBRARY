@@ -70,7 +70,7 @@ end
 function Library:InitKeySystem(cfg)
     local CorrectKey = cfg.Key or "key"
     local KeyLink = cfg.Link or "link"
-    local CustomImage = cfg.Image or nil -- Yeni eklenen resim parametresi
+    local CustomImage = cfg.Image or nil
     local Callback = cfg.Callback
 
     local KeyGui = Instance.new("ScreenGui", CoreGui)
@@ -82,22 +82,28 @@ function Library:InitKeySystem(cfg)
     KeyFrame.Size = UDim2.new(0, 350, 0, 220)
     KeyFrame.Position = UDim2.new(0.5, -175, 0.5, -110)
     KeyFrame.BackgroundColor3 = Theme.Main
-    KeyFrame.ClipsDescendants = true -- Resim taşmasın diye
-    Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
+    KeyFrame.BorderSizePixel = 0
+    
+    local KeyCorner = Instance.new("UICorner", KeyFrame)
+    KeyCorner.CornerRadius = UDim.new(0, 12)
+    
     local Stroke = Instance.new("UIStroke", KeyFrame)
     Stroke.Color = Color3.fromRGB(45, 45, 50)
 
-    -- Arka Plan Resmi (Opsiyonel)
+    -- Örnek kodundaki resim sistemi entegrasyonu
     if CustomImage then
-        local BGImage = Instance.new("ImageLabel")
-        BGImage.Name = "Background"
-        BGImage.Parent = KeyFrame
-        BGImage.Size = UDim2.new(1, 0, 1, 0)
-        BGImage.BackgroundTransparency = 1
-        BGImage.Image = "rbxassetid://" .. CustomImage:gsub("rbxassetid://", "")
-        BGImage.ScaleType = Enum.ScaleType.Crop
-        BGImage.ImageTransparency = 0.6 -- Resmin üzerine yazıların okunması için biraz şeffaflık
-        BGImage.ZIndex = 0
+        local ImageLabel = Instance.new("ImageLabel")
+        ImageLabel.Name = "KeyBackground"
+        ImageLabel.Parent = KeyFrame
+        ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        ImageLabel.BackgroundTransparency = 1
+        ImageLabel.Size = UDim2.new(1, 0, 1, 0) -- Tam siyah alanın büyüklüğü
+        ImageLabel.Image = "rbxassetid://" .. CustomImage:gsub("rbxassetid://", "")
+        ImageLabel.ZIndex = 0 -- En arkada durması için
+        
+        local ImgCorner = Instance.new("UICorner")
+        ImgCorner.CornerRadius = UDim.new(0, 12)
+        ImgCorner.Parent = ImageLabel
     end
 
     local Title = Instance.new("TextLabel")
