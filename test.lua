@@ -31,8 +31,7 @@ function Library:Notify(title, text, duration)
     local Stroke = Instance.new("UIStroke", Notif)
     Stroke.Color = Theme.Accent
     Stroke.Thickness = 1.5
-    local TitleLabel = Instance.new("TextLabel")
-    TitleLabel.Parent = Notif
+    local TitleLabel = Instance.new("TextLabel", Notif)
     TitleLabel.Size = UDim2.new(1, 0, 0, 25)
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Text = " " .. title
@@ -40,8 +39,7 @@ function Library:Notify(title, text, duration)
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.TextSize = 14
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    local ContentLabel = Instance.new("TextLabel")
-    ContentLabel.Parent = Notif
+    local ContentLabel = Instance.new("TextLabel", Notif)
     ContentLabel.Position = UDim2.new(0, 0, 0, 25)
     ContentLabel.Size = UDim2.new(1, -10, 1, -25)
     ContentLabel.BackgroundTransparency = 1
@@ -66,25 +64,21 @@ function Library:InitKeySystem(cfg)
     local Callback = cfg.Callback
     local KeyGui = Instance.new("ScreenGui", CoreGui)
     KeyGui.Name = "TR_VOID_KEYSYS"
-    local KeyFrame = Instance.new("Frame")
-    KeyFrame.Name = "KeyFrame"
-    KeyFrame.Parent = KeyGui
+    local KeyFrame = Instance.new("Frame", KeyGui)
     KeyFrame.Size = UDim2.new(0, 350, 0, 220)
     KeyFrame.Position = UDim2.new(0.5, -175, 0.5, -110)
     KeyFrame.BackgroundColor3 = Theme.Main
     Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 12)
     local Stroke = Instance.new("UIStroke", KeyFrame)
     Stroke.Color = Color3.fromRGB(45, 45, 50)
-    local Title = Instance.new("TextLabel")
-    Title.Parent = KeyFrame
+    local Title = Instance.new("TextLabel", KeyFrame)
     Title.Size = UDim2.new(1, 0, 0, 60)
     Title.BackgroundTransparency = 1
     Title.Text = "TR-VOID | KEY SYSTEM"
     Title.TextColor3 = Theme.Text
     Title.Font = Enum.Font.GothamBold
     Title.TextSize = 20
-    local KeyInput = Instance.new("TextBox")
-    KeyInput.Parent = KeyFrame
+    local KeyInput = Instance.new("TextBox", KeyFrame)
     KeyInput.Size = UDim2.new(0.85, 0, 0, 45)
     KeyInput.Position = UDim2.new(0.075, 0, 0.35, 0)
     KeyInput.BackgroundColor3 = Theme.Element
@@ -96,8 +90,7 @@ function Library:InitKeySystem(cfg)
     Instance.new("UICorner", KeyInput)
     local InpStroke = Instance.new("UIStroke", KeyInput)
     InpStroke.Color = Color3.fromRGB(50, 50, 55)
-    local VerifyBtn = Instance.new("TextButton")
-    VerifyBtn.Parent = KeyFrame
+    local VerifyBtn = Instance.new("TextButton", KeyFrame)
     VerifyBtn.Size = UDim2.new(0.4, 0, 0, 40)
     VerifyBtn.Position = UDim2.new(0.075, 0, 0.7, 0)
     VerifyBtn.BackgroundColor3 = Theme.Accent
@@ -105,8 +98,7 @@ function Library:InitKeySystem(cfg)
     VerifyBtn.TextColor3 = Theme.Text
     VerifyBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", VerifyBtn)
-    local GetBtn = Instance.new("TextButton")
-    GetBtn.Parent = KeyFrame
+    local GetBtn = Instance.new("TextButton", KeyFrame)
     GetBtn.Size = UDim2.new(0.4, 0, 0, 40)
     GetBtn.Position = UDim2.new(0.525, 0, 0.7, 0)
     GetBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
@@ -114,10 +106,7 @@ function Library:InitKeySystem(cfg)
     GetBtn.TextColor3 = Theme.Text
     GetBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", GetBtn)
-    GetBtn.MouseButton1Click:Connect(function()
-        setclipboard(KeyLink)
-        Library:Notify("System", "Key link copied to clipboard!", 3)
-    end)
+    GetBtn.MouseButton1Click:Connect(function() setclipboard(KeyLink) Library:Notify("System", "Key link copied to clipboard!", 3) end)
     VerifyBtn.MouseButton1Click:Connect(function()
         if KeyInput.Text == CorrectKey then
             InpStroke.Color = Theme.Success
@@ -138,7 +127,7 @@ function Library:InitKeySystem(cfg)
     end)
 end
 
--- [3. ANA PENCERE]
+-- [3. ANA PENCERE OLUŞTURMA]
 function Library:CreateWindow(cfg)
     local WindowName = cfg.Name or "TR-VOID"
     local WindowWidth = cfg.Width or 480
@@ -222,10 +211,8 @@ function Library:CreateWindow(cfg)
     ContainerHolder.BackgroundTransparency = 1
     local Tabs = {}
     local FirstTab = true
-
     function Tabs:CreateTab(name)
         local TabBtn = Instance.new("TextButton", TabBar)
-        TabBtn.Name = name .. "_Tab"
         TabBtn.BackgroundColor3 = Theme.Element
         TabBtn.Text = name
         TabBtn.TextColor3 = Theme.SecondaryText
@@ -235,7 +222,6 @@ function Library:CreateWindow(cfg)
         local textS = TextService:GetTextSize(name, 15, Enum.Font.GothamBold, Vector2.new(1000, 40))
         TabBtn.Size = UDim2.new(0, textS.X + 30, 0, 32)
         local Container = Instance.new("ScrollingFrame", ContainerHolder)
-        Container.Name = name .. "_Container"
         Container.Size = UDim2.new(1, 0, 1, 0)
         Container.BackgroundTransparency = 1
         Container.Visible = FirstTab
@@ -257,6 +243,7 @@ function Library:CreateWindow(cfg)
         FirstTab = false
         local Elements = {}
 
+        -- [ELEMENT: BUTTON]
         function Elements:CreateButton(text, callback)
             local Button = Instance.new("TextButton", Container)
             Button.BackgroundColor3 = Theme.Element
@@ -268,12 +255,12 @@ function Library:CreateWindow(cfg)
             Button.TextXAlignment = Enum.TextXAlignment.Left
             Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
             Button.MouseButton1Click:Connect(callback)
-            
             local Utils = {}
-            function Utils:SetText(newText) Button.Text = " " .. newText end
+            function Utils:SetText(newT) Button.Text = " " .. newT end
             return Utils
         end
 
+        -- [ELEMENT: TOGGLE]
         function Elements:CreateToggle(text, callback)
             local state = false
             local ToggleBtn = Instance.new("TextButton", Container)
@@ -301,12 +288,12 @@ function Library:CreateWindow(cfg)
                 TweenService:Create(Circle, TweenInfo.new(0.2), {Position = state and UDim2.new(1, -22, 0.5, -9) or UDim2.new(0, 4, 0.5, -9)}):Play()
                 TweenService:Create(Tbg, TweenInfo.new(0.2), {BackgroundColor3 = state and Theme.Success or Color3.fromRGB(50, 50, 60)}):Play()
             end)
-            
             local Utils = {}
-            function Utils:SetText(newText) ToggleBtn.Text = " " .. newText end
+            function Utils:SetText(newT) ToggleBtn.Text = " " .. newT end
             return Utils
         end
 
+        -- [ELEMENT: SLIDER]
         function Elements:CreateSlider(text, min, max, default, callback)
             local SliderFrame = Instance.new("Frame", Container)
             SliderFrame.BackgroundColor3 = Theme.Element
@@ -337,19 +324,15 @@ function Library:CreateWindow(cfg)
                 callback(value)
             end
             local sliding = false
-            SliderFrame.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then sliding = true; UpdateSlider(input) end
-            end)
-            UserInputService.InputChanged:Connect(function(input)
-                if sliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then UpdateSlider(input) end
-            end)
+            SliderFrame.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then sliding = true; UpdateSlider(input) end end)
+            UserInputService.InputChanged:Connect(function(input) if sliding and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then UpdateSlider(input) end end)
             UserInputService.InputEnded:Connect(function() sliding = false end)
-            
             local Utils = {}
-            function Utils:SetText(newText) text = newText; Label.Text = " " .. text .. ": " .. math.floor(min + (max-min)*(Fill.Size.X.Scale)) end
+            function Utils:SetText(newT) Label.Text = " " .. newT end
             return Utils
         end
 
+        -- [ELEMENT: DROPDOWN (MULTIPLE & SINGLE)]
         function Elements:CreateDropdown(text, list, options, callback)
             local open = false
             local selected = {}
@@ -361,11 +344,10 @@ function Library:CreateWindow(cfg)
             DropFrame.Size = UDim2.new(0.96, 0, 0, 45)
             DropFrame.ClipsDescendants = true
             Instance.new("UICorner", DropFrame)
-
             local MainBtn = Instance.new("TextButton", DropFrame)
             MainBtn.Size = UDim2.new(1, 0, 0, 45)
             MainBtn.BackgroundTransparency = 1
-            MainBtn.Text = "  " .. text .. " (Select...)"
+            MainBtn.Text = " " .. text .. (multi and " (0/"..maxSelections..")" or " (Select...)")
             MainBtn.TextColor3 = Theme.Text
             MainBtn.Font = Enum.Font.GothamSemibold
             MainBtn.TextSize = MainFontSize
@@ -384,12 +366,6 @@ function Library:CreateWindow(cfg)
             Holder.Size = UDim2.new(1, 0, 0, #list * 35)
             Holder.BackgroundTransparency = 1
 
-            local function updateHeader()
-                if multi then
-                    MainBtn.Text = "  " .. text .. " (" .. #selected .. "/" .. maxSelections .. ")"
-                end
-            end
-
             for i, v in pairs(list) do
                 local Option = Instance.new("TextButton", Holder)
                 Option.Size = UDim2.new(1, -20, 0, 30)
@@ -400,58 +376,53 @@ function Library:CreateWindow(cfg)
                 Option.Font = Enum.Font.Gotham
                 Option.TextSize = MainFontSize
                 Instance.new("UICorner", Option)
-
                 Option.MouseButton1Click:Connect(function()
                     if multi then
-                        local found = table.find(selected, v)
-                        if found then
-                            table.remove(selected, found)
+                        local foundIndex = table.find(selected, v)
+                        if foundIndex then
+                            table.remove(selected, foundIndex)
                             Option.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-                            callback(selected)
                         elseif #selected < maxSelections then
                             table.insert(selected, v)
-                            Option.BackgroundColor3 = Color3.fromRGB(80, 80, 85) -- Gri renk
-                            callback(selected)
+                            Option.BackgroundColor3 = Color3.fromRGB(80, 80, 85)
                         end
-                        updateHeader()
+                        MainBtn.Text = " " .. text .. " (" .. #selected .. "/" .. maxSelections .. ")"
+                        callback(selected)
                     else
                         callback(v)
-                        MainBtn.Text = "  " .. text .. ": " .. tostring(v)
+                        MainBtn.Text = " " .. text .. ": " .. tostring(v)
                         open = false
                         TweenService:Create(DropFrame, TweenInfo.new(0.3), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
                         Arrow.Text = "▼"
                     end
                 end)
             end
-
             MainBtn.MouseButton1Click:Connect(function()
                 open = not open
-                local targetH = open and (45 + (#list * 35) + 10) or 45
+                local targetH = open and (45 + (#list * 35) + 5) or 45
                 Arrow.Text = open and "▲" or "▼"
                 TweenService:Create(DropFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(0.96, 0, 0, targetH)}):Play()
             end)
-            
             local Utils = {}
-            function Utils:SetText(newText) text = newText; updateHeader() end
+            function Utils:SetText(newT) MainBtn.Text = " " .. newT end
             return Utils
         end
 
+        -- [ELEMENT: INPUT]
         function Elements:CreateInput(text, placeholder, callback)
             local InpFrame = Instance.new("Frame", Container)
             InpFrame.BackgroundColor3 = Theme.Element
             InpFrame.Size = UDim2.new(0.96, 0, 0, 60)
             Instance.new("UICorner", InpFrame)
-
-            local InpTitle = Instance.new("TextLabel", InpFrame)
-            InpTitle.Size = UDim2.new(1, 0, 0, 25)
-            InpTitle.Position = UDim2.new(0, 12, 0, 5)
-            InpTitle.BackgroundTransparency = 1
-            InpTitle.Text = text
-            InpTitle.TextColor3 = Theme.SecondaryText
-            InpTitle.Font = Enum.Font.Gotham
-            InpTitle.TextSize = 13
-            InpTitle.TextXAlignment = Enum.TextXAlignment.Left
-
+            local Title = Instance.new("TextLabel", InpFrame)
+            Title.Size = UDim2.new(1, 0, 0, 25)
+            Title.Position = UDim2.new(0, 12, 0, 5)
+            Title.BackgroundTransparency = 1
+            Title.Text = text
+            Title.TextColor3 = Theme.SecondaryText
+            Title.Font = Enum.Font.Gotham
+            Title.TextSize = 13
+            Title.TextXAlignment = Enum.TextXAlignment.Left
             local Box = Instance.new("TextBox", InpFrame)
             Box.Size = UDim2.new(1, -24, 0, 25)
             Box.Position = UDim2.new(0, 12, 0, 30)
@@ -462,18 +433,9 @@ function Library:CreateWindow(cfg)
             Box.Font = Enum.Font.Gotham
             Box.TextSize = MainFontSize
             Instance.new("UICorner", Box)
-            
-            local Stroke = Instance.new("UIStroke", Box)
-            Stroke.Color = Color3.fromRGB(50, 50, 55)
-
-            Box.Focused:Connect(function() TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Theme.Accent}):Play() end)
-            Box.FocusLost:Connect(function(enter)
-                TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(50, 50, 55)}):Play()
-                callback(Box.Text)
-            end)
-            
+            Box.FocusLost:Connect(function() callback(Box.Text) end)
             local Utils = {}
-            function Utils:SetText(newText) InpTitle.Text = newText end
+            function Utils:SetText(newT) Title.Text = newT end
             return Utils
         end
 
