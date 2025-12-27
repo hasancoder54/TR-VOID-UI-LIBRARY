@@ -314,6 +314,8 @@ function Library:CreateWindow(cfg)
             Button.TextXAlignment = Enum.TextXAlignment.Left
             Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
             Button.MouseButton1Click:Connect(callback)
+            
+            return {SetText = function(_, t) Button.Text = "  " .. t end}
         end
 
         function Elements:CreateToggle(text, callback)
@@ -346,6 +348,8 @@ function Library:CreateWindow(cfg)
                 TweenService:Create(Circle, TweenInfo.new(0.2), {Position = state and UDim2.new(1, -22, 0.5, -9) or UDim2.new(0, 4, 0.5, -9)}):Play()
                 TweenService:Create(Tbg, TweenInfo.new(0.2), {BackgroundColor3 = state and Theme.Success or Color3.fromRGB(50, 50, 60)}):Play()
             end)
+            
+            return {SetText = function(_, t) ToggleBtn.Text = "  " .. t end}
         end
 
         function Elements:CreateSlider(text, min, max, default, callback)
@@ -394,10 +398,17 @@ function Library:CreateWindow(cfg)
                 end
             end)
             UserInputService.InputEnded:Connect(function() sliding = false end)
+            
+            return {SetText = function(_, t) Label.Text = "  " .. t end}
         end
 
-        function Elements:CreateDropdown(text, list, callback)
+        -- [YENİ: ÇOKLU SEÇİM DESTEKLİ DROPDOWN]
+        function Elements:CreateDropdown(text, list, options, callback)
             local open = false
+            local selected = {}
+            local multi = (options and options.Multi) or false
+            local maxLimit = (options and options.Max) or #list
+            
             local DropFrame = Instance.new("Frame", Container)
             DropFrame.BackgroundColor3 = Theme.Element
             DropFrame.Size = UDim2.new(0.96, 0, 0, 45)
@@ -407,7 +418,7 @@ function Library:CreateWindow(cfg)
             local MainBtn = Instance.new("TextButton", DropFrame)
             MainBtn.Size = UDim2.new(1, 0, 0, 45)
             MainBtn.BackgroundTransparency = 1
-            MainBtn.Text = "  " .. text .. " (Select...)"
+            MainBtn.Text = "  " .. text .. (multi and " (0/"..maxLimit..")" or " (Select...)")
             MainBtn.TextColor3 = Theme.Text
             MainBtn.Font = Enum.Font.GothamSemibold
             MainBtn.TextSize = MainFontSize
@@ -430,10 +441,23 @@ function Library:CreateWindow(cfg)
                 Instance.new("UICorner", Option)
                 
                 Option.MouseButton1Click:Connect(function()
-                    callback(v)
-                    MainBtn.Text = "  " .. text .. ": " .. tostring(v)
-                    open = false
-                    TweenService:Create(DropFrame, TweenInfo.new(0.3), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
+                    if multi then
+                        local found = table.find(selected, v)
+                        if found then
+                            table.remove(selected, found)
+                            Option.BackgroundColor3 = Theme.Main
+                        elseif #selected < maxLimit then
+                            table.insert(selected, v)
+                            Option.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+                        end
+                        MainBtn.Text = "  " .. text .. " (" .. #selected .. "/" .. maxLimit .. ")"
+                        callback(selected)
+                    else
+                        callback(v)
+                        MainBtn.Text = "  " .. text .. ": " .. tostring(v)
+                        open = false
+                        TweenService:Create(DropFrame, TweenInfo.new(0.3), {Size = UDim2.new(0.96, 0, 0, 45)}):Play()
+                    end
                 end)
             end
 
@@ -442,6 +466,8 @@ function Library:CreateWindow(cfg)
                 local targetH = open and (45 + (#list * 35) + 5) or 45
                 TweenService:Create(DropFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(0.96, 0, 0, targetH)}):Play()
             end)
+            
+            return {SetText = function(_, t) MainBtn.Text = "  " .. t end}
         end
 
         function Elements:CreateInput(text, placeholder, callback)
@@ -474,6 +500,8 @@ function Library:CreateWindow(cfg)
             Box.FocusLost:Connect(function(enter)
                 if enter then callback(Box.Text) end
             end)
+            
+            return {SetText = function(_, t) InpTitle.Text = t end}
         end
 
         return Elements
